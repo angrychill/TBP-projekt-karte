@@ -5,6 +5,7 @@ from persistent import Persistent
 from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping
 import random
+from BTrees import IOBTree
 
 class CardValue(Enum):
     SEVEN = 7
@@ -53,7 +54,7 @@ class Deck(Persistent):
     def __init__(self):
         self.cards = PersistentList(self.generate_deck())
         self.discard_pile = PersistentList()
-        self.deck_debug()
+  
     
     def generate_deck(self) -> PersistentList:
         deck = [Card(suit, value) for suit in CardSuit for value in CardValue]
@@ -63,7 +64,7 @@ class Deck(Persistent):
     def draw_card(self) -> Card:
         ''' pops card from deck and returns card value '''
         if len(self.cards) >= 0:
-            print("not empty")
+            # print("not empty")
             drawn_card = self.cards.pop()
             self._p_changed = 1
             return drawn_card
@@ -178,7 +179,6 @@ class GameSession(Persistent):
         self.player1 = Player(player1_name)
         self.player2 = Player(player2_name)
         self.winner : Player = None
-        self.history = PersistentList()
         self.deck : Deck = Deck()
         self.suit_hierarchy = suit_hierarchy
         self.finished = False
@@ -327,12 +327,20 @@ class GameSession(Persistent):
 class GameRoot(Persistent):
     def __init__(self):
         super().__init__()
-        self.sessions = PersistentMapping() # key: ID, value: gamesession
+        self.sessions = IOBTree() # key: ID, value: gamesession
     
     def create_session(self, session_id : int, player_1_name, player_2_name) -> GameSession:
+        if session_id in self.sessions:
+            raise ValueError("Session ID already exists.")
         session = GameSession(session_id, player_1_name, player_2_name)
         self.sessions[session_id] = session
+        self._p_changed = 1
         return session
     
     def get_session(self, session_id) -> GameSession:
-        return self.sessions.get(session_id)
+        return self.sessions.item(session_id)
+    
+    def delete_session(self, session_id: int):
+        if session_id in self.sessions:
+            del self.sessions[session_id]
+            self._p_changed = 1

@@ -35,16 +35,19 @@ def create_session():
     print("player_1_name", player_1_name)
     print("player_2_name", player_2_name)
     
-    if session_id in game_root.sessions:
-        return jsonify({"error": "Session ID already exists"}), 400
-    
-    session : GameSession = game_root.create_session(session_id, player_1_name, player_2_name)
+    try:
 
-    session.deal_cards()
-    game_root[session_id] = session
-    transaction.commit()
+        if session_id in game_root.sessions:
+            return jsonify({"error": "Session ID already exists"}), 400
+        session = game_root.create_session(session_id, player_1_name, player_2_name)
+        session.deal_cards()
+
+        transaction.commit()
+        
+        return jsonify({"message": f"Session {session_id} created"})
     
-    return jsonify({"message": f"Session {session_id} created"})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     
 @app.route('/play_card', methods=['POST'])
 def play_card():
@@ -94,7 +97,7 @@ def play_card():
                 
                 return jsonify({
                     "message": "Session finished",
-                    "winner": session.get_session_winner(),
+                    "winner": session.get_session_winner_player().name,
                     "player_1_score": session.player1.get_player_score(),
                     "player_2_score": session.player2.get_player_score()
                 })
@@ -147,3 +150,22 @@ def get_winner():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+@app.route('/delete_session', methods=['POST'])
+def delete_session():
+    data = request.json
+    session_id = data['session_id']
+
+    try:
+
+        if session_id in game_root.sessions:
+           game_root.delete_session(session_id)
+        else:
+            return jsonify({"error": "Session ID doesn't exists"}), 400
+
+        transaction.commit()
+        return jsonify({"message": f"Session {session_id} deleted"})
+    
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
