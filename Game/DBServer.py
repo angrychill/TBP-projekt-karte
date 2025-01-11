@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 
 # ZODB
-storage = FileStorage('../DB/game_db.fs')
+storage = FileStorage('C:/Users/Iris/Documents/TBP-projekt-karte/DB/game_db.fs')
 db = DB(storage)
 connection = db.open()
 root = connection.root()
@@ -55,8 +55,15 @@ def play_card():
     session_id = data['session_id']
     player = data['player']
     card_data = data['card']
-    card : Card = Card(card_data['suit'], card_data['value'])
+    card_suit = CardSuit(card_data['suit'])
+    card_value = CardValue(card_data['value'])
+    card : Card = Card(card_suit, card_value)
     
+    if not card:
+        return jsonify({"error": "Couldn't make card"}), 400
+    else:
+        print(card.parse_card())
+        
     session : GameSession = game_root.get_session(session_id)
     
     if not session:
@@ -148,10 +155,6 @@ def get_winner():
     else:
         return jsonify({"winner": winner.name, "score": winner.get_player_score()})
 
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
 @app.route('/delete_session', methods=['POST'])
 def delete_session():
     data = request.json
@@ -169,3 +172,7 @@ def delete_session():
     
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
+
+if __name__ == '__main__':
+    app.run(debug=True)
+

@@ -44,7 +44,7 @@ class Card(Persistent):
         return self.card_suit
     
     def parse_card(self) -> {CardSuit, CardValue}:
-        return [self.card_suit.value , self.card_value.value]
+        return [self.card_suit , self.card_value]
         
     
 class Deck(Persistent):
@@ -338,7 +338,7 @@ class GameRoot(Persistent):
         return session
     
     def get_session(self, session_id) -> GameSession:
-        return self.sessions.item(session_id)
+        return self.sessions[session_id]
     
     def delete_session(self, session_id: int):
         if session_id in self.sessions:
