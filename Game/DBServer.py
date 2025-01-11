@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 
 # ZODB
-storage = FileStorage('DB/game_db.fs')
+storage = FileStorage('../DB/game_db.fs')
 db = DB(storage)
 connection = db.open()
 root = connection.root()
@@ -32,11 +32,14 @@ def create_session():
     player_1_name = data['player_1_name']
     player_2_name = data['player_2_name']
     
+    print("player_1_name", player_1_name)
+    print("player_2_name", player_2_name)
+    
     if session_id in game_root.sessions:
         return jsonify({"error": "Session ID already exists"}), 400
     
     session : GameSession = game_root.create_session(session_id, player_1_name, player_2_name)
-    
+
     session.deal_cards()
     game_root[session_id] = session
     transaction.commit()

@@ -85,20 +85,20 @@ class Deck(Persistent):
         return len(self.cards)
   
     
-    def deck_debug(self):
-        card : Card
-        if self.cards:
-            for card in self.cards:
-                print(card.card_suit, card.card_value)
-        print("amount of cards in deck", len(self.cards) )
+    # def deck_debug(self):
+    #     card : Card
+    #     if self.cards:
+    #         for card in self.cards:
+    #             print(card.card_suit, card.card_value)
+    #     print("amount of cards in deck", len(self.cards) )
         
-        drawn_card = self.draw_card()
-        print("drawing card", drawn_card.parse_card())
-        print("amount of cards in deck", len(self.cards) )
-        print("adding to discard pile", drawn_card.parse_card())
-        self.add_to_discard(drawn_card)
-        print("amount of cards in normal deck", len(self.cards) )
-        print("amount of cards in discard pile", len(self.discard_pile))
+    #     drawn_card = self.draw_card()
+    #     print("drawing card", drawn_card.parse_card())
+    #     print("amount of cards in deck", len(self.cards) )
+    #     print("adding to discard pile", drawn_card.parse_card())
+    #     self.add_to_discard(drawn_card)
+    #     print("amount of cards in normal deck", len(self.cards) )
+    #     print("amount of cards in discard pile", len(self.discard_pile))
     
 class Player(Persistent):
     def __init__(self, name):
@@ -179,14 +179,16 @@ class GameSession(Persistent):
         self.player2 = Player(player2_name)
         self.winner : Player = None
         self.history = PersistentList()
-        self.deck : Deck = self.generate_deck()
+        self.deck : Deck = Deck()
         self.suit_hierarchy = suit_hierarchy
         self.finished = False
     
-    def generate_deck(self) -> PersistentList:
-        deck = PersistentList([Card(suit, value) for suit in CardSuit for value in CardValue])
-        random.shuffle(deck)
-        return deck
+    # def generate_deck(self) -> PersistentList:
+    #     deck = PersistentList([Card(suit, value) for suit in CardSuit for value in CardValue])
+    #     random.shuffle(deck)
+    #     self.deck = deck
+    #     self._p_changed = 1
+    #     return deck
 
     def deal_cards(self):
         for i in range(0, 4, 1):
@@ -328,7 +330,7 @@ class GameRoot(Persistent):
         self.sessions = PersistentMapping() # key: ID, value: gamesession
     
     def create_session(self, session_id : int, player_1_name, player_2_name) -> GameSession:
-        session = GameSession(player_1_name, player_2_name)
+        session = GameSession(session_id, player_1_name, player_2_name)
         self.sessions[session_id] = session
         return session
     
