@@ -22,7 +22,7 @@ if 'game_root' not in root:
     root['game_root']['sessions'] = GameRoot()
     transaction.commit()
 
-game_root = root['game_root']['sessions']
+game_root : GameRoot = root['game_root']['sessions']
 
 # API
 @app.route('/create_session', methods=['POST'])
@@ -86,7 +86,61 @@ def play_card():
             and session.player1.get_player_cards() <= 0 \
             and session.player2.get_player_cards() <= 0:
                 session.finished = True
-
+                session.end_session()
+                transaction.commit()
+                
+                return jsonify({
+                    "message": "Session finished",
+                    "winner": session.get_session_winner(),
+                    "player_1_score": session.player1.get_player_score(),
+                    "player_2_score": session.player2.get_player_score()
+                })
     
     transaction.commit()
     return jsonify({"message": "Card played."}), 200
+
+@app.route('/get_session_state', methods=['GET'])
+def get_session_state():
+    session_id = request.args.get('session_id')
+    session : GameSession = game_root.get_session(session_id)
+    if not session:
+        return jsonify({"error": "Session not found."}), 404
+    
+    state = {
+        "player_1": {
+            "name": session.player1.name,
+            "score": session.player1.get_player_score(),
+            "hand": [card.parse_card() for card in session.player1.cards]
+        },
+        
+        "player_2": {
+            "name": session.player2.name,
+            "score": session.player2.get_player_score(),
+            "hand": [card.parse_card() for card in session.player2.cards]
+        },
+        
+        "deck_size": session.deck.get_deck_size(),
+        "finished": session.finished
+
+    }
+    
+    return jsonify(state), 200
+
+@app.route('/get_winner', methods=['GET'])
+def get_winner():
+    session_id = request.args.get('session_id')
+    session : GameSession = game_root.get_session(session_id)
+    if not session:
+        return jsonify({"error": "Session not found."}), 404
+    
+    if not session.finished:
+        return jsonify({"error": "Game is not finished yet."}), 400
+    
+    winner = session.get_session_winner_player()
+    if winner == 0:
+        return jsonify({"winner": 0, "score": None})
+    else:
+        return jsonify({"winner": winner.name, "score": winner.get_player_score()})
+
+if __name__ == '__main__':
+    app.run(debug=True)

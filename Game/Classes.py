@@ -306,12 +306,21 @@ class GameSession(Persistent):
             self.winner = self.determine_session_winner(self.player1, self.player2)
             self._p_changed = 1    
     
-    def get_session_winner(self) -> int:
+    def get_session_winner_int(self) -> int:
         if self.finished:
             return self.winner
         else:
             print("round not yet finished")
             return None
+    
+    def get_session_winner_player(self) -> Player:
+        if self.finished:
+            if self.winner == 1:
+                return self.player1
+            elif self.winner == 2:
+                return self.player2
+            else:
+                return 0
         
 class GameRoot(Persistent):
     def __init__(self):
