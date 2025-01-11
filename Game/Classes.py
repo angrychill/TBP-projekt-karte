@@ -1,5 +1,6 @@
 from enum import Enum
 from collections import deque
+import ZODB
 from persistent import Persistent
 from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping
@@ -40,8 +41,8 @@ class Card(Persistent):
     def get_suit(self) -> CardSuit:
         return self.card_suit
     
-    def return_full_card_value(self) -> tuple[CardSuit, CardValue]:
-        return [self.card_suit, self.card_value]
+    def get_full_card(self) -> tuple[CardSuit, CardValue]:
+        return [self.card_suit.value , self.card_value.value]
         
     
 class Deck(Persistent):
@@ -56,17 +57,25 @@ class Deck(Persistent):
     def generate_deck(self) -> PersistentList:
         deck = [Card(suit, value) for suit in CardSuit for value in CardValue]
         random.shuffle(deck)
-        
         return deck
     
-    def check_is_empty(self) -> bool:
-        return len(self.cards) != 0
-    
     def draw_card(self) -> Card:
-        if self.check_is_empty == False:
-            return self.cards.pop()
+        if len(self.cards) >= 0:
+            print("not empty")
+            drawn_card = self.cards.pop()
+            self._p_changed = 1
+            return drawn_card
         else:
+            print("empty deck")
             return None
+    
+    def add_to_discard(self, card):
+        if len(self.discard_pile) <= 32:
+            self.discard_pile.append(card)
+            self._p_changed = 1
+        else:
+            print("too many cards in discard deck!")
+        
     
     def deck_debug(self):
         card : Card
@@ -74,24 +83,56 @@ class Deck(Persistent):
             for card in self.cards:
                 print(card.card_suit, card.card_value)
         print("amount of cards in deck", len(self.cards) )
+        
+        drawn_card = self.draw_card()
+        print("drawing card", drawn_card.get_full_card())
+        print("amount of cards in deck", len(self.cards) )
+        print("adding to discard pile", drawn_card.get_full_card())
+        self.add_to_discard(drawn_card)
+        print("amount of cards in normal deck", len(self.cards) )
+        print("amount of cards in discard pile", len(self.discard_pile))
     
 class Player(Persistent):
     def __init__(self, name):
         super().__init__()
         self.name = name
         self.score = 0
-        self.deck = PersistentList()
+        self.cards = PersistentList()
+        self.can_play : bool = False
     
-    def draw_card(self):
-        if self.deck:
-            return self.deck.pop(0)
-        return None
+   # card initialization handled at the start of game?
+   
+    def enable_turn(self):
+        self.can_play = True
+        self._p_changed = 1
     
-    def add_card_to_deck(self, card):
-        self.deck.append(card)
+    def disable_turn(self):
+        self.can_play = False
+        self._p_changed = 1
+    
+    def play_card(self, selected_card : Card) -> Card:
+        if self.cards and (selected_card in self.cards):
+            played_card : Card = self.cards.pop(self.cards.index(selected_card))
+            self._p_changed = 1
+            return played_card
+
+    def add_card_to_deck(self, card : Card):
+        if len(self.cards) <= 4:
+            self.cards.append(card)
+            self._p_changed = 1
+        else:
+            print("too many cards in hand")
         
     def get_player_score(self):
         return self.score
+    
+    def increase_player_score(self):
+        self.score += 1
+        self._p_changed = 1
+    
+    def clear_player_score(self):
+        self.score = 0
+        self._p_changed = 1
 
 
 class GameSession(Persistent):
@@ -111,7 +152,12 @@ class GameSession(Persistent):
         return deck
 
     def deal_cards(self):
-        pass
+        for i in range(0, 4, 1):
+            card_to_deal_1 : Card = self.deck.draw_card()
+            self.player1.add_card_to_deck(card_to_deal_1)
+            
+            card_to_deal_2 : Card = self.deck.draw_card()
+            self.player1.add_card_to_deck(card_to_deal_2)
     
     def compare_suits(self, suit1 : CardSuit, suit2 : CardSuit) -> int:
         if suit2 in self.suit_hierarchy[suit1]:

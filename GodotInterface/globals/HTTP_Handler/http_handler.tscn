@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://cdqqv3b4swlxg"]
+
+[ext_resource type="Script" uid="uid://coalmlikg0tsx" path="res://globals/HTTP_Handler/http_handler.gd" id="1_pstht"]
+
+[node name="HTTPHandler" type="Node" node_paths=PackedStringArray("request_node")]
+script = ExtResource("1_pstht")
+request_node = NodePath("HTTPRequest")
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
