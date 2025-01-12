@@ -1,7 +1,7 @@
 from enum import Enum
 from collections import deque
 import ZODB
-from persistent import Persistent
+import persistent
 from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping
 import random
@@ -32,7 +32,7 @@ suit_hierarchy = {
 }
 
 
-class Card(Persistent):
+class Card(persistent.Persistent):
     
     def __init__(self, card_suit, card_value):
         self.card_value = card_value
@@ -50,7 +50,7 @@ class Card(Persistent):
         return [suit.value , value.value]
         
     
-class Deck(Persistent):
+class Deck(persistent.Persistent):
     
     # it's a stack, so Last in, First out
     
@@ -104,7 +104,7 @@ class Deck(Persistent):
     #     print("amount of cards in normal deck", len(self.cards) )
     #     print("amount of cards in discard pile", len(self.discard_pile))
     
-class Player(Persistent):
+class Player(persistent.Persistent):
     def __init__(self, name):
         super().__init__()
         self.name = name
@@ -175,7 +175,7 @@ class Player(Persistent):
             print("cannot set card!")
 
 
-class GameSession(Persistent):
+class GameSession(persistent.Persistent):
     def __init__(self, session_id, player1_name, player2_name):
         super().__init__()
         self.session_id = session_id
@@ -337,7 +337,7 @@ class GameSession(Persistent):
             else:
                 return 0
         
-class GameRoot(Persistent):
+class GameRoot(persistent.Persistent):
     def __init__(self):
         super().__init__()
         self.sessions = IOBTree() # key: ID, value: gamesession
@@ -348,7 +348,6 @@ class GameRoot(Persistent):
         session = GameSession(session_id, player_1_name, player_2_name)
         self.sessions[session_id] = session
         self._p_changed = 1
-        transaction.commit()
         return session
     
     def get_session(self, session_id) -> GameSession:

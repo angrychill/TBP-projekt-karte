@@ -1,3 +1,4 @@
+import ZODB.FileStorage
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from ZODB import DB
@@ -6,20 +7,21 @@ from persistent import Persistent
 from persistent.mapping import PersistentMapping
 import transaction
 from Classes import *
+from flask import g
 
 # flask
 app = Flask(__name__)
 CORS(app)
 
 # ZODB
-storage = FileStorage('C:/Users/Iris/Documents/TBP-projekt-karte/DB/game_db.fs')
-db = DB(storage)
+storage = ZODB.FileStorage.FileStorage('C:/Users/Iris/Documents/TBP-projekt-karte/DB/game_db2.fs')
+db = ZODB.DB(storage)
 connection = db.open()
 root = connection.root()
 
 if 'game_root' not in root:
     root['game_root'] = PersistentMapping()
-# if 'sessions' not in root['game_root']:
+if 'sessions' not in root['game_root']:
     root['game_root']['sessions'] = GameRoot()
 
 transaction.commit()
@@ -104,6 +106,7 @@ def play_card():
                 session.finished = True
                 session.end_session()
                 transaction.commit()
+                connection.close()
                 print("session finished!")
                 return jsonify({
                     "message": "Session finished",
@@ -229,7 +232,10 @@ def get_all_sessions_summary():
     except Exception as e:
         return jsonify({"message": "Error retrieving sessions", "error": str(e)}), 500
 
+
 @app.teardown_appcontext
 def close_connection(exception=None):
     if connection:
+        transaction.commit()
         connection.close()
+        db.close()
