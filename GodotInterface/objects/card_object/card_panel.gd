@@ -1,8 +1,6 @@
 extends PanelContainer
 class_name CardPanel
 
-var card_preview : PackedScene = preload("res://objects/card_object/card_panel_preview.tscn")
-
 signal card_clicked_on(card_data : CardData, card : Node)
 
 @export var card_data : CardData
@@ -45,7 +43,7 @@ func set_face_down_value():
 
 func _on_input(event : InputEvent):
 	if event.is_action_pressed("click"):
-		# print("card clicked!")
+		print("card clicked!")
 		self.modulate = Color(1.5, 1.5, 1.5)
 		card_clicked_on.emit(card_data, self)
 

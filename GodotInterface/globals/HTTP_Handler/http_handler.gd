@@ -4,6 +4,10 @@ extends Node
 @export var server_url : String
 var local_ip
 
+signal new_session_created(id : int)
+signal session_status_returned(data : SessionData)
+signal round_finished(round_winner : int, player_1_score : int, player_2_score : int)
+
 
 func _ready() -> void:
 	local_ip = IP.resolve_hostname(str(OS.get_environment("COMPUTERNAME")),1)
@@ -11,24 +15,24 @@ func _ready() -> void:
 	
 	http_request.request_completed.connect(_on_request_completed)
 	#request_node.request("https://api.github.com/repos/godotengine/godot/releases/latest")
-	delete_session(2)
-	await get_tree().create_timer(1.0).timeout
-	create_session(2, "P1", "P2")
-	await get_tree().create_timer(1.0).timeout
-	get_session_state(2)
-	await get_tree().create_timer(1.0).timeout
-	var new_card : CardData = CardData.new()
-	new_card.suit = CardData.CardSuit.HEARTS
-	new_card.value =  CardData.CardValue.SEVEN
-	var new_card2 : CardData = CardData.new()
-	new_card2.suit = CardData.CardSuit.ACORNS
-	new_card2.value =  CardData.CardValue.EIGHT
-	play_card(2, "P1", new_card)
-	get_session_state(2)
-	await get_tree().create_timer(1.0).timeout
-	play_card(2, "P2", new_card2)
-	await get_tree().create_timer(1.0).timeout
-	get_session_state(2)
+	#delete_session(2)
+	#await get_tree().create_timer(1.0).timeout
+	#create_session(2, "P1", "P2")
+	#await get_tree().create_timer(1.0).timeout
+	#get_session_state(2)
+	#await get_tree().create_timer(1.0).timeout
+	#var new_card : CardData = CardData.new()
+	#new_card.suit = CardData.CardSuit.HEARTS
+	#new_card.value =  CardData.CardValue.SEVEN
+	#var new_card2 : CardData = CardData.new()
+	#new_card2.suit = CardData.CardSuit.ACORNS
+	#new_card2.value =  CardData.CardValue.EIGHT
+	#play_card(2, "P1", new_card)
+	#get_session_state(2)
+	#await get_tree().create_timer(1.0).timeout
+	#play_card(2, "P2", new_card2)
+	#await get_tree().create_timer(1.0).timeout
+	#get_session_state(2)
 
 func _on_request_completed(result, response_code, headers, body : PackedByteArray):
 	var json = JSON.new()
@@ -50,6 +54,8 @@ func _on_request_completed(result, response_code, headers, body : PackedByteArra
 				handle_card_played(data_received)
 			"Session successfully deleted":
 				handle_session_deleted(data_received)
+			"Session created":
+				handle_session_created(data_received)
 
 
 func create_session(id : int, player_1_name : String, player_2_name : String):
@@ -81,8 +87,17 @@ func delete_session(id : int):
 	var json = JSON.stringify(body)
 	http_request.request(url, headers, HTTPClient.METHOD_POST, json)
 
+func handle_session_created(data_received : Dictionary):
+	var session_id = data_received["session_id"]
+	new_session_created.emit(session_id)
+	pass
+
 func handle_round_finish(data_received: Dictionary):
 	print("round finished")
+	var round_winner : int = data_received["winner"]
+	var player_1_points : int = data_received["player_1_score"]
+	var player_2_points : int = data_received["player_2_score"]
+	round_finished.emit(round_winner, player_1_points, player_2_points)
 	pass
 
 func handle_session_finish(data_received: Dictionary):
@@ -90,14 +105,24 @@ func handle_session_finish(data_received: Dictionary):
 	pass
 
 func handle_session_state_retrieval(data_received: Dictionary):
-	print("session state")
-	print(data_received)
+	print("session state retrieved")
 	var new_player_1_data : PlayerData = PlayerData.new()
 	var new_player_2_data : PlayerData = PlayerData.new()
 	new_player_1_data.update_player_data(data_received["player_1"])
 	new_player_2_data.update_player_data(data_received["player_2"])
+	var session_id : int = data_received["session_id"]
+	var remaining_deck_size : int = data_received["deck_size"]
 	print(new_player_1_data)
 	print(new_player_2_data)
+	
+	var new_session_data : SessionData = SessionData.new()
+	new_session_data.player_1_data = new_player_1_data
+	new_session_data.player_2_data = new_player_2_data
+	new_session_data.session_id = session_id
+	new_session_data.session_finished = data_received["finished"]
+	new_session_data.winner = data_received["session_winner"]
+	
+	session_status_returned.emit(new_session_data)
 
 func handle_card_played(data_received : Dictionary):
 	print("card played")

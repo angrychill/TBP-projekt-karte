@@ -11,8 +11,13 @@ config_version=5
 [application]
 
 config/name="Godot TBP Interface"
+run/main_scene="uid://dgar6n8pfq7s6"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+HTTPHandler="*res://globals/HTTP_Handler/http_handler.tscn"
 
 [display]
 

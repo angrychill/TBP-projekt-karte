@@ -9,7 +9,7 @@
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2segm"]
 texture = ExtResource("1_xg4e8")
 
-[node name="UIPlaySession" type="Control" node_paths=PackedStringArray("player_chosen_card_container", "other_chosen_card_container", "player_choice_button", "player_hand_panel")]
+[node name="UIPlaySession" type="Control" node_paths=PackedStringArray("player_chosen_card_container", "other_chosen_card_container", "player_choice_button", "player_hand_panel", "other_player_choice_status", "other_player_score", "other_player_hand_panel")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -18,9 +18,12 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_v8m4q")
 player_chosen_card_container = NodePath("MarginContainer/VBoxContainer/CardComparison/HBoxContainer/PPChosenCard")
-other_chosen_card_container = NodePath("MarginContainer/VBoxContainer/CardComparison/HBoxContainer/PPChosenCard")
+other_chosen_card_container = NodePath("MarginContainer/VBoxContainer/CardComparison/HBoxContainer/OPChosenCard")
 player_choice_button = NodePath("MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/CardChoiceButton")
 player_hand_panel = NodePath("MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel")
+other_player_choice_status = NodePath("MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus/OPlayerStatus")
+other_player_score = NodePath("MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus/OPlayerScore/OPlayerScoreText")
+other_player_hand_panel = NodePath("MarginContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer/OPlayerCards")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -108,7 +111,7 @@ text = "Player AI"
 [node name="OPlayerStatus" type="Label" parent="MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Deciding...."
+text = "Waiting..."
 
 [node name="CardComparison" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -133,6 +136,7 @@ text = "vs"
 [node name="OPChosenCard" type="PanelContainer" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer"]
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 2
+script = ExtResource("3_xt48p")
 
 [node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/CardComparison"]
 layout_mode = 2

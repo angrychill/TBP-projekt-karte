@@ -1,3 +1,11 @@
-[gd_scene format=3 uid="uid://dgar6n8pfq7s6"]
+[gd_scene load_steps=4 format=3 uid="uid://dgar6n8pfq7s6"]
+
+[ext_resource type="PackedScene" uid="uid://bt04sbfcb78g8" path="res://objects/start_screen/start_screen.tscn" id="1_02lwj"]
+[ext_resource type="Script" uid="uid://b6i8fqdj1jeox" path="res://objects/game_handler/game_handler.gd" id="1_d2t2h"]
+[ext_resource type="PackedScene" uid="uid://d08ikbgahwhay" path="res://objects/game_session/game_session.tscn" id="3_um41n"]
 
 [node name="GameHandler" type="Node"]
+script = ExtResource("1_d2t2h")
+scenes = Array[PackedScene]([ExtResource("1_02lwj"), ExtResource("3_um41n")])
+
+[node name="StartScreen" parent="." instance=ExtResource("1_02lwj")]

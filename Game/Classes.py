@@ -232,7 +232,7 @@ class GameSession(Persistent):
                 return suit_comparison
             # if suits are equal return stronger value
             else:
-                return 1 if card1.card_value > card2.card_value else 2
+                return 1 if card1.card_value.value > card2.card_value.value else 2
         
         return 0
         
@@ -290,7 +290,7 @@ class GameSession(Persistent):
             # player 2 gets point
             self.player2.increase_player_score()
             return 2
-
+    
         pass
     
     def play_session(self):

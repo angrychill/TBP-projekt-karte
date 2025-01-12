@@ -1,3 +1,30 @@
-[gd_scene format=3 uid="uid://d08ikbgahwhay"]
+[gd_scene load_steps=8 format=3 uid="uid://d08ikbgahwhay"]
 
-[node name="GameSession" type="Node"]
+[ext_resource type="PackedScene" uid="uid://cwy5i2onbnlgj" path="res://objects/ai_player/ai_player.tscn" id="1_3jwmj"]
+[ext_resource type="Script" uid="uid://nv41anqpcxos" path="res://objects/game_session/game_session.gd" id="1_7aggq"]
+[ext_resource type="PackedScene" uid="uid://bob34351lxgys" path="res://objects/ui/ui_play_session.tscn" id="2_4nes5"]
+[ext_resource type="Script" uid="uid://rveqkfaudgnl" path="res://data_classes/session_data.gd" id="2_wobwa"]
+[ext_resource type="Script" uid="uid://rihcpdex6w7q" path="res://data_classes/card_data.gd" id="3_7aggq"]
+[ext_resource type="Script" uid="uid://4rlsx2hvay73" path="res://objects/player/real_player.gd" id="5_wobwa"]
+
+[sub_resource type="Resource" id="Resource_yh5kg"]
+script = ExtResource("2_wobwa")
+session_id = 0
+session_deck = Array[ExtResource("3_7aggq")]([])
+session_finished = false
+winner = ""
+metadata/_custom_type_script = ExtResource("2_wobwa")
+
+[node name="GameSession" type="Node" node_paths=PackedStringArray("ai_player", "real_player", "play_session_ui")]
+script = ExtResource("1_7aggq")
+session_data = SubResource("Resource_yh5kg")
+ai_player = NodePath("AIPlayer")
+real_player = NodePath("RealPlayer")
+play_session_ui = NodePath("UIPlaySession")
+
+[node name="AIPlayer" parent="." instance=ExtResource("1_3jwmj")]
+
+[node name="RealPlayer" type="Node" parent="."]
+script = ExtResource("5_wobwa")
+
+[node name="UIPlaySession" parent="." instance=ExtResource("2_4nes5")]
