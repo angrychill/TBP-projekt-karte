@@ -26,3 +26,8 @@ func suit_to_string(suit : CardSuit) -> String:
 	var key : String = CardSuit.find_key(suit)
 	var string : String = key.capitalize()
 	return string
+
+func string_to_suit(string : String) -> CardSuit:
+	var c_string = string.to_upper()
+	var suit : CardSuit = CardSuit.get(c_string)
+	return suit

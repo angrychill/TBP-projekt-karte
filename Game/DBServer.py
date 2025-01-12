@@ -108,13 +108,23 @@ def play_card():
                     "player_1_score": session.player1.get_player_score(),
                     "player_2_score": session.player2.get_player_score()
                 })
+        else:
+            return jsonify({
+                "message": "Round finished",
+                "winner": session_round_winner,
+                "player_1_score": session.player1.get_player_score(),
+                "player_2_score": session.player2.get_player_score()
+                
+            })
     
     transaction.commit()
-    return jsonify({"message": "Card played."}), 200
+    return jsonify({"message": "Card played"}), 200
 
 @app.route('/get_session_state', methods=['GET'])
 def get_session_state():
-    session_id = request.args.get('session_id')
+    data = request.json
+    session_id = data['session_id']
+    
     session : GameSession = game_root.get_session(session_id)
     if not session:
         return jsonify({"error": "Session not found."}), 404
@@ -131,7 +141,7 @@ def get_session_state():
             "score": session.player2.get_player_score(),
             "hand": [card.parse_card() for card in session.player2.cards]
         },
-        
+        "message": "Session state retrieved",
         "deck_size": session.deck.get_deck_size(),
         "finished": session.finished
 
@@ -151,9 +161,15 @@ def get_winner():
     
     winner = session.get_session_winner_player()
     if winner == 0:
-        return jsonify({"winner": 0, "score": None})
+        return jsonify({
+            "message": "Session winner returned",
+            "winner": 0,
+            "score": None})
     else:
-        return jsonify({"winner": winner.name, "score": winner.get_player_score()})
+        return jsonify({
+            "message": "Session winner returned",
+            "winner": winner.name,
+            "score": winner.get_player_score()})
 
 @app.route('/delete_session', methods=['POST'])
 def delete_session():
@@ -168,7 +184,7 @@ def delete_session():
             return jsonify({"error": "Session ID doesn't exists"}), 400
 
         transaction.commit()
-        return jsonify({"message": f"Session {session_id} deleted"})
+        return jsonify({"message": f"Session successfully deleted"})
     
     except ValueError as e:
         return jsonify({"error": str(e)}), 400

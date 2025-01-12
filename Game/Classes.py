@@ -43,8 +43,10 @@ class Card(Persistent):
     def get_suit(self) -> CardSuit:
         return self.card_suit
     
-    def parse_card(self) -> {CardSuit, CardValue}:
-        return [self.card_suit , self.card_value]
+    def parse_card(self):
+        suit : CardSuit = self.card_suit
+        value : CardValue = self.card_value
+        return [suit.value , value.value]
         
     
 class Deck(Persistent):
