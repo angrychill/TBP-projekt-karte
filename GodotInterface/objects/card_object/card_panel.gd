@@ -3,10 +3,13 @@ class_name CardPanel
 
 var card_preview : PackedScene = preload("res://objects/card_object/card_panel_preview.tscn")
 
+signal card_clicked_on(card_data : CardData, card : Node)
+
 @export var card_data : CardData
 @export var label_up : Label
 @export var label_down : Label
 @export var label_mid : Label
+@export var is_face_down : bool = false
 
 #func _init(data : CardData) -> void:
 	#card_data = data
@@ -14,33 +17,38 @@ var card_preview : PackedScene = preload("res://objects/card_object/card_panel_p
 func _ready() -> void:
 	pass
 	
+	self.gui_input.connect(_on_input)
+	
 	label_down.text = str(card_data.value)
 	label_up.text = str(card_data.value)
 	label_mid.text = str(card_data.suit)
+	
+	if is_face_down == true:
+		for child in get_children():
+			child.hide()
+	else:
+		for child in get_children():
+			child.show()
 
-func _get_drag_data(at_position: Vector2) -> Variant:
-	print("dragging!")
-	var drag_data = card_data
-	var origin_node = self
-	generate_drag_preview(drag_data)
-	return [drag_data, origin_node]
-
-#func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
-	## if position isnt a dragreceiver container, return the card back
-	#print("i can receive drop data")
-	#return true
-#
-#func _drop_data(at_position: Vector2, data: Variant) -> void:
-	#print("data")
-	#pass
-
-func generate_drag_preview(preview_data : CardData):
-	var preview_panel : CardPanelPreview = card_preview.instantiate()
-	preview_panel.card_data = preview_data
-	preview_panel.global_position = get_global_mouse_position()
-	preview_panel.drag_completed.connect(_on_preview_drag_completion)
-	get_tree().current_scene.add_child(preview_panel)
+func set_face_down_value():
 	pass
+	is_face_down = !is_face_down
+	if is_face_down == false:
+		pass
+		# show everything
+		for child in get_children():
+			child.show()
+	else:
+		# hide everything
+		for child in get_children():
+			child.hide()
 
-func _on_preview_drag_completion(data):
-	print("drag completed x2")
+func _on_input(event : InputEvent):
+	if event.is_action_pressed("click"):
+		# print("card clicked!")
+		self.modulate = Color(1.5, 1.5, 1.5)
+		card_clicked_on.emit(card_data, self)
+
+func reset_selection():
+	# print("reset selection")
+	self.modulate = Color(1.0, 1.0, 1.0)

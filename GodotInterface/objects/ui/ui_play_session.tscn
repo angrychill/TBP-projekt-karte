@@ -1,20 +1,26 @@
-[gd_scene load_steps=6 format=3 uid="uid://bob34351lxgys"]
+[gd_scene load_steps=7 format=3 uid="uid://bob34351lxgys"]
 
+[ext_resource type="Script" uid="uid://doc7ey3540a5h" path="res://objects/ui/ui_play_session.gd" id="1_v8m4q"]
 [ext_resource type="Texture2D" uid="uid://dukqpxjrbncdo" path="res://icon.svg" id="1_xg4e8"]
 [ext_resource type="PackedScene" uid="uid://b3goxqh13dwrf" path="res://objects/card_object/card_panel.tscn" id="2_2segm"]
-[ext_resource type="PackedScene" uid="uid://dx0u6wfskqndc" path="res://objects/card_receiver_panel/card_receiver.tscn" id="2_7m7s4"]
-[ext_resource type="Script" uid="uid://bprvk57sim5d2" path="res://objects/card_receiver_panel/card_receiver.gd" id="3_v8m4q"]
+[ext_resource type="Script" uid="uid://drey6bxgncmgs" path="res://objects/ui/pp_chosen_card.gd" id="3_xt48p"]
+[ext_resource type="Script" uid="uid://cgg2u6d6n6wh6" path="res://objects/ui/p_player_cards_panel.gd" id="4_epu6v"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2segm"]
 texture = ExtResource("1_xg4e8")
 
-[node name="UIPlaySession" type="Control"]
+[node name="UIPlaySession" type="Control" node_paths=PackedStringArray("player_chosen_card_container", "other_chosen_card_container", "player_choice_button", "player_hand_panel")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_v8m4q")
+player_chosen_card_container = NodePath("MarginContainer/VBoxContainer/CardComparison/HBoxContainer/PPChosenCard")
+other_chosen_card_container = NodePath("MarginContainer/VBoxContainer/CardComparison/HBoxContainer/PPChosenCard")
+player_choice_button = NodePath("MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/CardChoiceButton")
+player_hand_panel = NodePath("MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -23,8 +29,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_top = 15
-theme_override_constants/margin_bottom = 15
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
@@ -117,24 +121,23 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 50
 
-[node name="CardReceiver" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer" node_paths=PackedStringArray("capacity_parent") instance=ExtResource("2_7m7s4")]
+[node name="PPChosenCard" type="PanelContainer" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer"]
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 2
-capacity_parent = NodePath(".")
+script = ExtResource("3_xt48p")
 
 [node name="Label" type="Label" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer"]
 layout_mode = 2
 text = "vs"
 
-[node name="CardReceiver2" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer" node_paths=PackedStringArray("capacity_parent") instance=ExtResource("2_7m7s4")]
+[node name="OPChosenCard" type="PanelContainer" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer"]
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 2
-capacity_parent = NodePath(".")
 
 [node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/CardComparison"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "PLAYER wins round!"
+text = " "
 
 [node name="PlayingPlayer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -165,31 +168,47 @@ text = "Score"
 layout_mode = 2
 text = "12"
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer"]
 layout_mode = 2
-theme_override_constants/margin_top = 15
+
+[node name="CardChoiceButton" type="Button" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Choose this card"
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer"]
+layout_mode = 2
 theme_override_constants/margin_bottom = 15
 
-[node name="PPlayerCardsPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer" node_paths=PackedStringArray("capacity_parent")]
+[node name="PPlayerCardsPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer" node_paths=PackedStringArray("cards_parent")]
 custom_minimum_size = Vector2(580, 0)
 layout_mode = 2
-script = ExtResource("3_v8m4q")
-capacity = 4
-capacity_parent = NodePath("MarginContainer/Player2Cards")
-metadata/_custom_type_script = ExtResource("3_v8m4q")
+script = ExtResource("4_epu6v")
+cards_parent = NodePath("MarginContainer/Player2Cards")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="Player2Cards" type="HBoxContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel/MarginContainer"]
+[node name="Player2Cards" type="HBoxContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer"]
 custom_minimum_size = Vector2(100, 150)
 layout_mode = 2
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards" instance=ExtResource("2_2segm")]
+[node name="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards" instance=ExtResource("2_2segm")]
 layout_mode = 2
+
+[node name="PanelContainer2" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards" instance=ExtResource("2_2segm")]
+layout_mode = 2
+
+[node name="PanelContainer3" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards" instance=ExtResource("2_2segm")]
+layout_mode = 2
+
+[node name="PanelContainer4" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards" instance=ExtResource("2_2segm")]
+layout_mode = 2
+
+[connection signal="gui_input" from="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards/PanelContainer" to="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards/PanelContainer" method="_on_gui_input"]
