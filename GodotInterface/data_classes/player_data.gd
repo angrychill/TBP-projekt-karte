@@ -18,3 +18,9 @@ func parse_hand_data(data : Array) -> Array[CardData]:
 		card.value = entry[1]
 		hand.append(card)
 	return hand
+
+func parse_hand_resource(array : Array[CardData]) -> Array:
+	var parsed_array : Array
+	for card in array:
+		parsed_array.append([card.suit, card.value])
+	return parsed_array

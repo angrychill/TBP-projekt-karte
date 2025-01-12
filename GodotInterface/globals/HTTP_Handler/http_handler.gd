@@ -7,7 +7,8 @@ var local_ip
 signal new_session_created(id : int)
 signal session_status_returned(data : SessionData)
 signal round_finished(round_winner : int, player_1_score : int, player_2_score : int)
-
+signal session_summary_retrieved(sessions : Dictionary)
+signal session_finished(session_winner : int, player_1_score : int, player_2_score : int)
 
 func _ready() -> void:
 	local_ip = IP.resolve_hostname(str(OS.get_environment("COMPUTERNAME")),1)
@@ -56,6 +57,8 @@ func _on_request_completed(result, response_code, headers, body : PackedByteArra
 				handle_session_deleted(data_received)
 			"Session created":
 				handle_session_created(data_received)
+			"Retrieved session summaries":
+				handle_session_summaries(data_received)
 
 
 func create_session(id : int, player_1_name : String, player_2_name : String):
@@ -86,6 +89,14 @@ func delete_session(id : int):
 	var headers = ["Content-Type: application/json"]
 	var json = JSON.stringify(body)
 	http_request.request(url, headers, HTTPClient.METHOD_POST, json)
+
+func get_sessions_summary():
+	var url : String = server_url + "/get_all_sessions_summary"
+	var headers = ["Content-Type: application/json"]
+
+	http_request.request(url, headers, HTTPClient.METHOD_GET, "")
+
+# --- SESSION HANDLING ---
 
 func handle_session_created(data_received : Dictionary):
 	var session_id = data_received["session_id"]
@@ -121,11 +132,19 @@ func handle_session_state_retrieval(data_received: Dictionary):
 	new_session_data.player_2_data = new_player_2_data
 	new_session_data.session_id = session_id
 	new_session_data.session_finished = data_received["finished"]
+	
 	new_session_data.winner = data_received["session_winner"]
 	
-	print("player 1 cards in hand: ", new_player_1_data.player_hand.size())
-	print("player 2 cards in hand: ", new_player_2_data.player_hand.size())
-	session_status_returned.emit(new_session_data)
+	#print("player 1 cards in hand: ", new_player_1_data.player_hand.size())
+	#print("player 2 cards in hand: ", new_player_2_data.player_hand.size())
+	print("player 1 cards ", new_player_1_data.parse_hand_resource(new_player_1_data.player_hand))
+	print("player 2 cards ", new_player_2_data.parse_hand_resource(new_player_2_data.player_hand))
+	
+	if new_session_data.session_finished == true:
+		print("session ovar")
+		session_finished.emit(new_session_data.winner, new_session_data.player_1_data.player_score, new_session_data.player_2_data.player_score)
+	else:
+		session_status_returned.emit(new_session_data)
 
 func handle_card_played(data_received : Dictionary):
 	print("card played")
@@ -137,3 +156,10 @@ func handle_session_deleted(data_received : Dictionary):
 
 func handle_session_winner_returned(data_received: Dictionary):
 	print("session winner returned")
+
+func handle_session_summaries(data_received: Dictionary):
+	print(data_received)
+	var sessions : Array = data_received["sessions"]
+	print("num of sessions ", sessions.size())
+	session_summary_retrieved.emit(sessions)
+	pass

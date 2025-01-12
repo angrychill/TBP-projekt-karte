@@ -84,7 +84,7 @@ def play_card():
         return jsonify({"error": "Player not found."}), 400
     
     if not played_card:
-        return jsonify({"error": "Card not found in player's hand."}), 400
+        return jsonify({"error": f"Card not found in player {session_player.name} hand."}), 400
     else:
         session_player.set_chosen_card(played_card)
         transaction.commit()
@@ -97,9 +97,8 @@ def play_card():
         transaction.commit()
         
         # check if the session has ended
-        if session.deck.get_deck_size() <= 0 \
-            and session.player1.get_player_cards() <= 0 \
-            and session.player2.get_player_cards() <= 0:
+        if len(session.deck.cards) == 0 \
+            and (session.player1.get_player_cards() == 0 or session.player2.get_player_cards() == 0):
                 session.finished = True
                 session.end_session()
                 transaction.commit()
@@ -111,6 +110,9 @@ def play_card():
                     "player_2_score": session.player2.score
                 })
         else:
+            print("round finished")
+            print("amount of ai cards", len(session.player2.cards))
+            print("amount of player cards", len(session.player1.cards))
             return jsonify({
                 "message": "Round finished",
                 "winner": session_round_winner,
@@ -197,3 +199,30 @@ def delete_session():
 if __name__ == '__main__':
     app.run(debug=True)
 
+@app.route('/get_all_sessions_summary', methods=['GET'])
+def get_all_sessions_summary():
+    try:
+        sessions = game_root.sessions
+        
+        session_summaries = []
+        
+        for session_id, session in sessions.items():
+            session_summary = {
+                "session_id": session_id,
+                "winner": session.winner,
+                "finished": session.finished,
+            }
+            session_summaries.append(session_summary)
+        
+        response = {
+            "message": "Retrieved session summaries",
+            "sessions": session_summaries
+        }
+        
+        print("num of sessions", len(session_summaries))
+        
+        return jsonify(response), 200
+    
+    
+    except Exception as e:
+        return jsonify({"message": "Error retrieving sessions", "error": str(e)}), 500

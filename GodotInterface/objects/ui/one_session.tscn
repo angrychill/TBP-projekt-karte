@@ -1,0 +1,42 @@
+[gd_scene load_steps=2 format=3 uid="uid://by073d562yhdp"]
+
+[ext_resource type="Script" uid="uid://b8pc7m8mwokdy" path="res://objects/ui/one_session.gd" id="1_4yv4c"]
+
+[node name="OneSession" type="VBoxContainer" node_paths=PackedStringArray("id_label", "winner_label", "session_finished_label")]
+script = ExtResource("1_4yv4c")
+id_label = NodePath("HBoxContainer/Label2")
+winner_label = NodePath("HBoxContainer2/Label2")
+session_finished_label = NodePath("HBoxContainer3/Label2")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "Session ID:"
+
+[node name="Label2" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "2345"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer2"]
+layout_mode = 2
+text = "Session winner:"
+
+[node name="Label2" type="Label" parent="HBoxContainer2"]
+layout_mode = 2
+text = "P2"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer3"]
+layout_mode = 2
+text = "Session finished:"
+
+[node name="Label2" type="Label" parent="HBoxContainer3"]
+layout_mode = 2
+text = "YES"

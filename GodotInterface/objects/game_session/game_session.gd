@@ -18,7 +18,8 @@ func _ready() -> void:
 	ai_player.player_data = session_data.player_2_data
 	
 	HTTPHandler.session_status_returned.connect(_on_session_status_returned)
-	HTTPHandler.round_finished.connect(_on_sesson_round_finished)
+	HTTPHandler.round_finished.connect(_on_session_round_finished)
+	HTTPHandler.session_finished.connect(_on_session_game_finished)
 	
 	initialize_session()
 
@@ -29,6 +30,15 @@ func initialize_session():
 
 func _on_session_status_returned(data : SessionData):
 	print("updating session!")
+	
+	ai_player.chosen_card = null
+	real_player.chosen_card = null
+	ai_player.player_data = data.player_2_data
+	real_player.player_data = data.player_1_data
+	
+	#ai_player.update_player_data(data.player_2_data)
+	#real_player.update_player_data(data.player_1_data)
+	
 	update_session(data)
 
 func update_ai_status_waiting():
@@ -50,6 +60,7 @@ func _on_player_chose_card(card : CardData):
 	start_ai_turn()
 
 func _on_ai_chose_card(card : CardData):
+
 	update_ai_status_chosen(card)
 	# send http request
 	HTTPHandler.play_card(session_data.session_id, ai_player.player_data.player_name, card)
@@ -59,22 +70,33 @@ func _on_ai_chose_card(card : CardData):
 func start_ai_turn():
 	print("starting ai turn!")
 	update_ai_status_waiting()
-	await get_tree().create_timer(2).timeout
+	await get_tree().create_timer(1).timeout
 	ai_player.make_random_choice()
 	
 func update_session(data : SessionData):
-	print("session info")
-	print(data)
+	print("session info data")
+	
+	# printing
+	print("player 1 cards ", data.player_1_data.parse_hand_resource(data.player_1_data.player_hand))
+	print("player 2 cards ", data.player_2_data.parse_hand_resource(data.player_2_data.player_hand))
 	
 	# reset ui here
+	play_session_ui.update_round_visuals(data)
+	play_session_ui.other_chosen_card_container.get_child(0).reparent(play_session_ui.other_player_hand_panel)
 	play_session_ui.set_up_player_hand(data.player_1_data.player_hand)
-	
+	play_session_ui.player_chosen_card_container.get_child(0).queue_free()
 	play_session_ui.enable_choice_button()
 	play_session_ui.other_player_score.text = str(data.player_2_data.player_score)
 	play_session_ui.player_score.text = str(data.player_1_data.player_score)
 	
+	# reset player data here
+	#ai_player.chosen_card = null
+	#real_player.chosen_card = null
+	#ai_player.update_player_data(data.player_2_data)
+	#real_player.update_player_data(data.player_1_data)
+	
 
-func _on_sesson_round_finished(round_winner : int, player_1_points : int, player_2_points : int):
+func _on_session_round_finished(round_winner : int, player_1_points : int, player_2_points : int):
 	print("round winner ", round_winner)
 	print("player 1 points ", player_1_points)
 	print("player 2 points ", player_2_points)
@@ -83,11 +105,13 @@ func _on_sesson_round_finished(round_winner : int, player_1_points : int, player
 	# like maybe show_winner and stuff
 	
 	# call session update
-	play_session_ui.other_chosen_card_container.get_child(0).reparent(play_session_ui.other_player_hand_panel)
+	
 	HTTPHandler.get_session_state(session_data.session_id)
 	
 	# ui is reset whenever session update is called
 	
 	# 
 	
+func _on_session_game_finished():
+	pass
 	

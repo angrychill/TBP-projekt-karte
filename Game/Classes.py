@@ -152,7 +152,7 @@ class Player(Persistent):
         self._p_changed = 1
     
     def get_player_cards(self) -> int:
-        return len(self.cards)
+        return self.cards.count
       
     def is_parsed_card_in_hand(self, card_to_parse : Card) -> Card:
         ''' return card object if found from parsed key: value \n
@@ -266,13 +266,18 @@ class GameSession(Persistent):
             if first_card_draw == 1:
                 card1 = self.deck.draw_card()
                 card2 = self.deck.draw_card()
-                self.player1.add_card_to_deck(card1)
-                self.player2.add_card_to_deck(card2)
+                if card1 != None:
+                    self.player1.add_card_to_deck(card1)
+                if card2 != None:
+                    self.player2.add_card_to_deck(card2)
             else:
+                
                 card1 = self.deck.draw_card()
                 card2 = self.deck.draw_card()
-                self.player2.add_card_to_deck(card1)
-                self.player1.add_card_to_deck(card2)
+                if card1 != None:
+                    self.player2.add_card_to_deck(card1)
+                if card2 != None:
+                    self.player1.add_card_to_deck(card2)
         else:
             print("no more cards to deal!")
     

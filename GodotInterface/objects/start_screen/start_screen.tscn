@@ -1,9 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://bt04sbfcb78g8"]
+[gd_scene load_steps=4 format=3 uid="uid://bt04sbfcb78g8"]
 
 [ext_resource type="Script" uid="uid://cgf4nq6k8sp2b" path="res://objects/start_screen/start_screen.gd" id="1_cpufy"]
 [ext_resource type="Script" uid="uid://bvilwyruk571l" path="res://objects/start_screen/new_session_settings.gd" id="2_uwbhg"]
+[ext_resource type="PackedScene" uid="uid://by073d562yhdp" path="res://objects/ui/one_session.tscn" id="3_mcwdc"]
 
-[node name="StartScreen" type="Control" node_paths=PackedStringArray("create_new_session_button", "see_previous_sessions_button", "quit_game_button", "main_settings_container", "new_session_container", "past_sessions_container", "go_back_button_session", "go_back_button_past")]
+[node name="StartScreen" type="Control" node_paths=PackedStringArray("create_new_session_button", "see_previous_sessions_button", "quit_game_button", "main_settings_container", "new_session_container", "past_sessions_container", "go_back_button_session", "go_back_button_past", "sessions_container")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,6 +20,7 @@ new_session_container = NodePath("MarginContainer/NewSessionSettings")
 past_sessions_container = NodePath("MarginContainer/PastSessions")
 go_back_button_session = NodePath("MarginContainer/NewSessionSettings/GoBackButton")
 go_back_button_past = NodePath("MarginContainer/PastSessions/GoBackButton")
+sessions_container = NodePath("MarginContainer/PastSessions/ScrollContainer/SessionsContainer")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -29,7 +31,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MainSettings" type="VBoxContainer" parent="MarginContainer"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -48,6 +49,7 @@ layout_mode = 2
 text = "Quit"
 
 [node name="NewSessionSettings" type="VBoxContainer" parent="MarginContainer" node_paths=PackedStringArray("start_session_button", "player_1_name_input", "session_id_input")]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -106,113 +108,8 @@ layout_mode = 2
 theme_override_constants/separation = 30
 alignment = 1
 
-[node name="OneSession" type="VBoxContainer" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer"]
+[node name="OneSession" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer" instance=ExtResource("3_mcwdc")]
 layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession/HBoxContainer"]
-layout_mode = 2
-text = "Session ID:"
-
-[node name="Label2" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession/HBoxContainer"]
-layout_mode = 2
-text = "2345"
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession/HBoxContainer2"]
-layout_mode = 2
-text = "Session winner:"
-
-[node name="Label2" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession/HBoxContainer2"]
-layout_mode = 2
-text = "P2"
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession/HBoxContainer3"]
-layout_mode = 2
-text = "Winner points:"
-
-[node name="Label2" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession/HBoxContainer3"]
-layout_mode = 2
-text = "15"
-
-[node name="OneSession2" type="VBoxContainer" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession2"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession2/HBoxContainer"]
-layout_mode = 2
-text = "Session ID:"
-
-[node name="Label2" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession2/HBoxContainer"]
-layout_mode = 2
-text = "2345"
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession2"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession2/HBoxContainer2"]
-layout_mode = 2
-text = "Session winner:"
-
-[node name="Label2" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession2/HBoxContainer2"]
-layout_mode = 2
-text = "P2"
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession2"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession2/HBoxContainer3"]
-layout_mode = 2
-text = "Winner points:"
-
-[node name="Label2" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession2/HBoxContainer3"]
-layout_mode = 2
-text = "15"
-
-[node name="OneSession3" type="VBoxContainer" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession3"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession3/HBoxContainer"]
-layout_mode = 2
-text = "Session ID:"
-
-[node name="Label2" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession3/HBoxContainer"]
-layout_mode = 2
-text = "2345"
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession3"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession3/HBoxContainer2"]
-layout_mode = 2
-text = "Session winner:"
-
-[node name="Label2" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession3/HBoxContainer2"]
-layout_mode = 2
-text = "P2"
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession3"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession3/HBoxContainer3"]
-layout_mode = 2
-text = "Winner points:"
-
-[node name="Label2" type="Label" parent="MarginContainer/PastSessions/ScrollContainer/SessionsContainer/OneSession3/HBoxContainer3"]
-layout_mode = 2
-text = "15"
 
 [node name="GoBackButton" type="Button" parent="MarginContainer/PastSessions"]
 layout_mode = 2

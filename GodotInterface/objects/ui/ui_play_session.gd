@@ -44,6 +44,10 @@ func enable_choice_button():
 	player_choice_button.disabled = false
 
 func update_round_visuals(data : SessionData):
+	print("updating round visuals")
+	other_player_choice_status.text = "Choosing..."
+	player_chosen_card_data = null
+	#player_chosen_card_container.get_child(0).queue_free()
 	set_up_player_hand(data.player_1_data.player_hand)
 	
 
