@@ -14,7 +14,7 @@ app = Flask(__name__)
 CORS(app)
 
 # ZODB
-storage = ZODB.FileStorage.FileStorage('C:/Users/Iris/Documents/TBP-projekt-karte/DB/game_db2.fs')
+storage = ZODB.FileStorage.FileStorage('C:/Users/Iris/Documents/TBP-projekt-karte/DB/game_db.fs')
 db = ZODB.DB(storage)
 connection = db.open()
 root = connection.root()
@@ -233,9 +233,9 @@ def get_all_sessions_summary():
         return jsonify({"message": "Error retrieving sessions", "error": str(e)}), 500
 
 
-@app.teardown_appcontext
-def close_connection(exception=None):
-    if connection:
-        transaction.commit()
-        connection.close()
-        db.close()
+# @app.teardown_appcontext
+# def close_connection(exception=None):
+#     if connection:
+#         transaction.commit()
+#         connection.close()
+#         db.close()
