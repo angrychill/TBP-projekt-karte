@@ -9,6 +9,7 @@ const CARD_PANEL = preload("res://objects/card_object/card_panel.tscn")
 @export var other_player_score : Label
 @export var other_player_hand_panel : Control
 @export var player_score : Label
+@export var player_label : Label
 
 signal player_chose_card(data : CardData)
 

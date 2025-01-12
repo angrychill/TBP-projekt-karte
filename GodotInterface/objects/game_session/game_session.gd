@@ -26,6 +26,7 @@ func _ready() -> void:
 func initialize_session():
 	# set player hand
 	play_session_ui.set_up_player_hand(real_player.get_hand_cards())
+	play_session_ui.player_label.text = real_player.player_data.player_name
 	pass
 
 func _on_session_status_returned(data : SessionData):
@@ -112,6 +113,7 @@ func _on_session_round_finished(round_winner : int, player_1_points : int, playe
 	
 	# 
 	
-func _on_session_game_finished():
+func _on_session_game_finished(winner : String, p1_score : int, p2_score : int):
+	print("received session game finished!")
 	pass
 	

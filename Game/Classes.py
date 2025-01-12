@@ -5,6 +5,7 @@ from persistent import Persistent
 from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping
 import random
+import transaction
 from BTrees import IOBTree
 
 class CardValue(Enum):
@@ -245,14 +246,14 @@ class GameSession(Persistent):
         # shouldn't happen but yknow
         return comp
     
-    def determine_session_winner(self, player1 : Player, player2 : Player) -> int:
+    def determine_session_winner(self, player1 : Player, player2 : Player) -> str:
         if not self.finished:
             return None
         else:
             if player1.score == player2.score:
-                return 0
+                return "Tie"
             else:
-                return 1 if player1.score > player2.score else 2
+                return player1.name if player1.score > player2.score else player2.name
     
     def check_if_both_players_chose_cards(self) -> bool:
         return self.player1.chosen_card and self.player2.chosen_card
@@ -347,6 +348,7 @@ class GameRoot(Persistent):
         session = GameSession(session_id, player_1_name, player_2_name)
         self.sessions[session_id] = session
         self._p_changed = 1
+        transaction.commit()
         return session
     
     def get_session(self, session_id) -> GameSession:

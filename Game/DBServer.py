@@ -19,8 +19,10 @@ root = connection.root()
 
 if 'game_root' not in root:
     root['game_root'] = PersistentMapping()
+# if 'sessions' not in root['game_root']:
     root['game_root']['sessions'] = GameRoot()
-    transaction.commit()
+
+transaction.commit()
 
 game_root : GameRoot = root['game_root']['sessions']
 
@@ -98,7 +100,7 @@ def play_card():
         
         # check if the session has ended
         if len(session.deck.cards) == 0 \
-            and (session.player1.get_player_cards() == 0 or session.player2.get_player_cards() == 0):
+            and (len(session.player1.cards) == 0 or len(session.player2.cards) == 0):
                 session.finished = True
                 session.end_session()
                 transaction.commit()
@@ -226,3 +228,8 @@ def get_all_sessions_summary():
     
     except Exception as e:
         return jsonify({"message": "Error retrieving sessions", "error": str(e)}), 500
+
+@app.teardown_appcontext
+def close_connection(exception=None):
+    if connection:
+        connection.close()
