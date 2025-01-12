@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3 uid="uid://b7esbjb4pik5k"]
+
+[ext_resource type="Texture2D" uid="uid://dukqpxjrbncdo" path="res://icon.svg" id="1_1qrct"]
+[ext_resource type="Script" uid="uid://kwl40abui1k7" path="res://objects/card_object/card_panel_preview.gd" id="2_vqay0"]
+[ext_resource type="Script" uid="uid://rihcpdex6w7q" path="res://data_classes/card_data.gd" id="3_563dl"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2segm"]
+texture = ExtResource("1_1qrct")
+
+[sub_resource type="Resource" id="Resource_1qrct"]
+script = ExtResource("3_563dl")
+suit = 0
+value = 8
+metadata/_custom_type_script = ExtResource("3_563dl")
+
+[node name="PanelContainer" type="PanelContainer" node_paths=PackedStringArray("label_up", "label_down", "label_mid")]
+custom_minimum_size = Vector2(120, 150)
+theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
+script = ExtResource("2_vqay0")
+card_data = SubResource("Resource_1qrct")
+label_up = NodePath("Label")
+label_down = NodePath("Label2")
+label_mid = NodePath("Label3")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "2"
+
+[node name="Label3" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 26
+text = "HEARTS"
+
+[node name="Label2" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+text = "2"

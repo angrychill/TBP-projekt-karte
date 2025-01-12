@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dx0u6wfskqndc"]
+
+[ext_resource type="Script" uid="uid://bprvk57sim5d2" path="res://objects/card_receiver_panel/card_receiver.gd" id="1_po2yx"]
+
+[node name="CardReceiver" type="PanelContainer"]
+custom_minimum_size = Vector2(120, 0)
+script = ExtResource("1_po2yx")

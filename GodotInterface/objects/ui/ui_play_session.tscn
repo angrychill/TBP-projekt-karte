@@ -1,6 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://bob34351lxgys"]
+[gd_scene load_steps=6 format=3 uid="uid://bob34351lxgys"]
 
 [ext_resource type="Texture2D" uid="uid://dukqpxjrbncdo" path="res://icon.svg" id="1_xg4e8"]
+[ext_resource type="PackedScene" uid="uid://b3goxqh13dwrf" path="res://objects/card_object/card_panel.tscn" id="2_2segm"]
+[ext_resource type="PackedScene" uid="uid://dx0u6wfskqndc" path="res://objects/card_receiver_panel/card_receiver.tscn" id="2_7m7s4"]
+[ext_resource type="Script" uid="uid://bprvk57sim5d2" path="res://objects/card_receiver_panel/card_receiver.gd" id="3_v8m4q"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2segm"]
 texture = ExtResource("1_xg4e8")
@@ -114,19 +117,19 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 50
 
-[node name="PanelContainer5" type="PanelContainer" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer"]
-custom_minimum_size = Vector2(120, 0)
+[node name="CardReceiver" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer" node_paths=PackedStringArray("capacity_parent") instance=ExtResource("2_7m7s4")]
+custom_minimum_size = Vector2(150, 200)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
+capacity_parent = NodePath(".")
 
 [node name="Label" type="Label" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer"]
 layout_mode = 2
 text = "vs"
 
-[node name="PanelContainer6" type="PanelContainer" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer"]
-custom_minimum_size = Vector2(120, 0)
+[node name="CardReceiver2" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer" node_paths=PackedStringArray("capacity_parent") instance=ExtResource("2_7m7s4")]
+custom_minimum_size = Vector2(150, 200)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
+capacity_parent = NodePath(".")
 
 [node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/CardComparison"]
 layout_mode = 2
@@ -167,9 +170,13 @@ layout_mode = 2
 theme_override_constants/margin_top = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="PPlayerCardsPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer"]
+[node name="PPlayerCardsPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer" node_paths=PackedStringArray("capacity_parent")]
 custom_minimum_size = Vector2(580, 0)
 layout_mode = 2
+script = ExtResource("3_v8m4q")
+capacity = 4
+capacity_parent = NodePath("MarginContainer/Player2Cards")
+metadata/_custom_type_script = ExtResource("3_v8m4q")
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel"]
 layout_mode = 2
@@ -184,22 +191,5 @@ layout_mode = 2
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards"]
-custom_minimum_size = Vector2(120, 0)
+[node name="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards" instance=ExtResource("2_2segm")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
-
-[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards"]
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
-
-[node name="PanelContainer3" type="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards"]
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
-
-[node name="PanelContainer4" type="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards"]
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
