@@ -10,6 +10,7 @@ signal session_finished()
 @export var play_session_ui : UIPlaySession
 
 func _ready() -> void:
+	print("instantiating new game session")
 	ai_player.choice_made.connect(_on_ai_chose_card)
 	play_session_ui.player_chose_card.connect(_on_player_chose_card)
 	
@@ -19,8 +20,6 @@ func _ready() -> void:
 	HTTPHandler.session_status_returned.connect(_on_session_status_returned)
 	HTTPHandler.round_finished.connect(_on_sesson_round_finished)
 	
-	print("all connected!")
-	
 	initialize_session()
 
 func initialize_session():
@@ -29,6 +28,7 @@ func initialize_session():
 	pass
 
 func _on_session_status_returned(data : SessionData):
+	print("updating session!")
 	update_session(data)
 
 func update_ai_status_waiting():
@@ -65,14 +65,29 @@ func start_ai_turn():
 func update_session(data : SessionData):
 	print("session info")
 	print(data)
+	
+	# reset ui here
+	play_session_ui.set_up_player_hand(data.player_1_data.player_hand)
+	
+	play_session_ui.enable_choice_button()
+	play_session_ui.other_player_score.text = str(data.player_2_data.player_score)
+	play_session_ui.player_score.text = str(data.player_1_data.player_score)
+	
 
 func _on_sesson_round_finished(round_winner : int, player_1_points : int, player_2_points : int):
 	print("round winner ", round_winner)
 	print("player 1 points ", player_1_points)
 	print("player 2 points ", player_2_points)
 	
-	# reset  the UI
-	await get_tree().create_timer(1).timeout
+	# some UI polish handling here
+	# like maybe show_winner and stuff
 	
+	# call session update
+	play_session_ui.other_chosen_card_container.get_child(0).reparent(play_session_ui.other_player_hand_panel)
+	HTTPHandler.get_session_state(session_data.session_id)
+	
+	# ui is reset whenever session update is called
+	
+	# 
 	
 	

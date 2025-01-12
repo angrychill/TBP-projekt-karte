@@ -103,10 +103,10 @@ def play_card():
                 session.finished = True
                 session.end_session()
                 transaction.commit()
-                
+                print("session finished!")
                 return jsonify({
                     "message": "Session finished",
-                    "winner": session.get_session_winner_player().name,
+                    "winner": session.winner,
                     "player_1_score": session.player1.score,
                     "player_2_score": session.player2.score
                 })
@@ -136,14 +136,14 @@ def get_session_state():
     state = {
         "player_1": {
             "name": session.player1.name,
-            "score": session.player1.get_player_score(),
-            "hand": [card.parse_card() for card in session.player1.cards]
+            "score": session.player1.score,
+            "hand": [card.parse_card() for card in session.player1.cards if card]
         },
         
         "player_2": {
             "name": session.player2.name,
-            "score": session.player2.get_player_score(),
-            "hand": [card.parse_card() for card in session.player2.cards]
+            "score": session.player2.score,
+            "hand": [card.parse_card() for card in session.player2.cards if card]
         },
         "message": "Session state retrieved",
         "deck_size": session.deck.get_deck_size(),

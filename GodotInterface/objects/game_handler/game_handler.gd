@@ -30,7 +30,7 @@ func _on_session_status_returned(data : SessionData):
 	if session_in_progress == true:
 		print("session already in pogress, doing nothing")
 	else:
-		session_in_progress = false
+		session_in_progress = true
 		var new_session : GameSession = scenes[1].instantiate()
 		new_session.session_data = data
 		new_session.session_finished.connect(_on_session_finished)

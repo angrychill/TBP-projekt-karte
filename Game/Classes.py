@@ -65,7 +65,7 @@ class Deck(Persistent):
     
     def draw_card(self) -> Card:
         ''' pops card from deck and returns card value '''
-        if len(self.cards) >= 0:
+        if len(self.cards) > 0:
             # print("not empty")
             drawn_card = self.cards.pop()
             self._p_changed = 1
@@ -264,18 +264,23 @@ class GameSession(Persistent):
                 first_card_draw = random.randint(1, 2)
             
             if first_card_draw == 1:
-                card = self.deck.draw_card()
-                self.player1.add_card_to_deck(card)
+                card1 = self.deck.draw_card()
+                card2 = self.deck.draw_card()
+                self.player1.add_card_to_deck(card1)
+                self.player2.add_card_to_deck(card2)
             else:
-                card = self.deck.draw_card()
-                self.player2.add_card_to_deck(card)
+                card1 = self.deck.draw_card()
+                card2 = self.deck.draw_card()
+                self.player2.add_card_to_deck(card1)
+                self.player1.add_card_to_deck(card2)
         else:
             print("no more cards to deal!")
     
     def play_round(self, player_1_move : Card, player_2_move : Card) -> int:
         # round ends when both players played
         round_winner = self.determine_round_winner(player_1_move, player_2_move)
-        
+        self.player1.chosen_card = None
+        self.player2.chosen_card = None
         if round_winner == 0:
             # just in case of tie
             # both players get points

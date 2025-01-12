@@ -101,7 +101,8 @@ func handle_round_finish(data_received: Dictionary):
 	pass
 
 func handle_session_finish(data_received: Dictionary):
-	print("session finished")
+	print("SESSION OVER")
+	print("winner ", data_received["winner"])
 	pass
 
 func handle_session_state_retrieval(data_received: Dictionary):
@@ -122,6 +123,8 @@ func handle_session_state_retrieval(data_received: Dictionary):
 	new_session_data.session_finished = data_received["finished"]
 	new_session_data.winner = data_received["session_winner"]
 	
+	print("player 1 cards in hand: ", new_player_1_data.player_hand.size())
+	print("player 2 cards in hand: ", new_player_2_data.player_hand.size())
 	session_status_returned.emit(new_session_data)
 
 func handle_card_played(data_received : Dictionary):
