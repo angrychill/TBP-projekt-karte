@@ -1,0 +1,205 @@
+[gd_scene load_steps=3 format=3 uid="uid://bob34351lxgys"]
+
+[ext_resource type="Texture2D" uid="uid://dukqpxjrbncdo" path="res://icon.svg" id="1_xg4e8"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2segm"]
+texture = ExtResource("1_xg4e8")
+
+[node name="UIPlaySession" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="OtherPlayer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/OtherPlayer"]
+layout_mode = 2
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="OPlayerCardsPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/MarginContainer"]
+custom_minimum_size = Vector2(580, 0)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="OPlayerCards" type="HBoxContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer"]
+custom_minimum_size = Vector2(100, 150)
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer/OPlayerCards"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
+
+[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer/OPlayerCards"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
+
+[node name="PanelContainer3" type="PanelContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer/OPlayerCards"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
+
+[node name="PanelContainer4" type="PanelContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer/OPlayerCards"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
+
+[node name="OPlayerStatus" type="VBoxContainer" parent="MarginContainer/VBoxContainer/OtherPlayer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="OPlayerScore" type="HBoxContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus"]
+layout_mode = 2
+alignment = 1
+
+[node name="OPlayerScoreLabel" type="Label" parent="MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus/OPlayerScore"]
+layout_mode = 2
+text = "Score"
+
+[node name="OPlayerScoreText" type="Label" parent="MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus/OPlayerScore"]
+layout_mode = 2
+text = "12"
+
+[node name="OPlayerName" type="Label" parent="MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Player AI"
+
+[node name="OPlayerStatus" type="Label" parent="MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Deciding...."
+
+[node name="CardComparison" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/CardComparison"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 50
+
+[node name="PanelContainer5" type="PanelContainer" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer"]
+layout_mode = 2
+text = "vs"
+
+[node name="PanelContainer6" type="PanelContainer" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
+
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/CardComparison"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "PLAYER wins round!"
+
+[node name="PlayingPlayer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="PPlayerStatus" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="PPlayerName" type="Label" parent="MarginContainer/VBoxContainer/PlayingPlayer/PPlayerStatus"]
+layout_mode = 2
+text = "Player 2"
+horizontal_alignment = 1
+
+[node name="PPlayerScore" type="HBoxContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/PPlayerStatus"]
+layout_mode = 2
+alignment = 1
+
+[node name="PPlayerScoreLabel" type="Label" parent="MarginContainer/VBoxContainer/PlayingPlayer/PPlayerStatus/PPlayerScore"]
+layout_mode = 2
+text = "Score"
+
+[node name="PPlayerScoreText" type="Label" parent="MarginContainer/VBoxContainer/PlayingPlayer/PPlayerStatus/PPlayerScore"]
+layout_mode = 2
+text = "12"
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer"]
+layout_mode = 2
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="PPlayerCardsPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer"]
+custom_minimum_size = Vector2(580, 0)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="Player2Cards" type="HBoxContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel/MarginContainer"]
+custom_minimum_size = Vector2(100, 150)
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
+
+[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
+
+[node name="PanelContainer3" type="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
+
+[node name="PanelContainer4" type="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
