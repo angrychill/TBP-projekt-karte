@@ -30,6 +30,8 @@ func _on_new_session_requested(id : int, player_name : String):
 	get_parent().request_new_session(id, player_name)
 
 func _on_quit_game_button_pressed():
+	HTTPHandler.close_connection()
+	await get_tree().create_timer(1.0).timeout
 	get_tree().quit()
 
 func _on_create_new_session_button_pressed():

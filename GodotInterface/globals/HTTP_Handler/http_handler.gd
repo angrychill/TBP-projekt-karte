@@ -90,6 +90,12 @@ func delete_session(id : int):
 	var json = JSON.stringify(body)
 	http_request.request(url, headers, HTTPClient.METHOD_POST, json)
 
+func close_connection():
+	var url : String = server_url + "/close_connection"
+	var headers = ["Content-Type: application/json"]
+	print("closing connection")
+	http_request.request(url, headers, HTTPClient.METHOD_POST, "")
+
 func get_sessions_summary():
 	var url : String = server_url + "/get_all_sessions_summary"
 	var headers = ["Content-Type: application/json"]
