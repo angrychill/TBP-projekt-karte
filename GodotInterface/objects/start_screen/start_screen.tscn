@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://cg7sj2skah7pd" path="res://objects/start_screen/rejoin_session.gd" id="4_b8m4h"]
 [ext_resource type="PackedScene" uid="uid://b8ie21ssfidd0" path="res://objects/ui/rules_container.tscn" id="6_mra88"]
 
-[node name="StartScreen" type="Control" node_paths=PackedStringArray("create_new_session_button", "see_previous_sessions_button", "quit_game_button", "rejoin_session_button", "main_settings_container", "new_session_container", "past_sessions_container", "rejoin_session_container", "go_back_button_session", "go_back_button_past", "go_back_button_rejoin", "sessions_container")]
+[node name="StartScreen" type="Control" node_paths=PackedStringArray("create_new_session_button", "see_previous_sessions_button", "quit_game_button", "rejoin_session_button", "main_settings_container", "new_session_container", "past_sessions_container", "rejoin_session_container", "go_back_button_session", "go_back_button_past", "go_back_button_rejoin", "sessions_container", "rules_button", "rules_container", "rules_back")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -28,6 +28,9 @@ go_back_button_session = NodePath("MarginContainer/NewSessionSettings/GoBackButt
 go_back_button_past = NodePath("MarginContainer/PastSessions/GoBackButton")
 go_back_button_rejoin = NodePath("MarginContainer/RejoinSession/GoBackButton")
 sessions_container = NodePath("MarginContainer/PastSessions/ScrollContainer/SessionsContainer")
+rules_button = NodePath("MarginContainer/MainSettings/RulesButton")
+rules_container = NodePath("MarginContainer/VBoxContainer")
+rules_back = NodePath("MarginContainer/VBoxContainer/RulesBack")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -51,7 +54,7 @@ text = "Start New Game"
 layout_mode = 2
 text = "View Past Sessions"
 
-[node name="Button5" type="Button" parent="MarginContainer/MainSettings"]
+[node name="RulesButton" type="Button" parent="MarginContainer/MainSettings"]
 layout_mode = 2
 text = "View Rules"
 
@@ -202,7 +205,7 @@ text = "If the cards played are of suits of equal strength, then the card with t
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Button" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="RulesBack" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Go Back"

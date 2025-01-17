@@ -20,6 +20,10 @@ const ONE_SESSION = preload("res://objects/ui/one_session.tscn")
 
 @export var sessions_container : Control
 
+@export var rules_button : Button
+@export var rules_container : Control
+@export var rules_back : Button
+
 
 func _ready() -> void:
 	
@@ -34,7 +38,8 @@ func _ready() -> void:
 	new_session_container.start_new_session.connect(_on_new_session_requested)
 	go_back_button_rejoin.pressed.connect(_on_go_back_pressed)
 	rejoin_session_container.rejoin_session.connect(_on_session_rejoin_requested)
-
+	rules_button.pressed.connect(_on_rules_button_pressed)
+	rules_back.pressed.connect(_on_go_back_pressed)
 
 func _on_session_rejoin_requested(id : int):
 	get_parent().request_rejoin_session(id)
@@ -61,11 +66,18 @@ func _on_rejoin_session_button_pressed():
 	rejoin_session_container.show()
 	pass
 
+func _on_rules_button_pressed():
+	new_session_container.hide()
+	past_sessions_container.hide()
+	rejoin_session_container.hide()
+	main_settings_container.hide()
+	rules_container.show()
 
 func _on_go_back_pressed():
 	new_session_container.hide()
 	past_sessions_container.hide()
 	rejoin_session_container.hide()
+	rules_container.hide()
 	main_settings_container.show()
 
 func _on_session_summary_retrieved(sessions : Array):
