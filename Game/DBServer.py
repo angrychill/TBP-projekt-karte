@@ -8,29 +8,41 @@ from persistent.mapping import PersistentMapping
 import transaction
 from Classes import *
 from flask import g
+from BTrees import IOBTree
 
 # flask
 app = Flask(__name__)
 CORS(app)
 
 # ZODB
-storage = ZODB.FileStorage.FileStorage('C:/Users/Iris/Documents/TBP-projekt-karte/DB/game_db.fs')
+storage = ZODB.FileStorage.FileStorage('C:/Program Files/GitHub projects/TBP-projekt-karte/DB/test_6.fs')
 db = ZODB.DB(storage)
+
 connection = db.open()
 root = connection.root()
 
+game_root : GameRoot
+
 if 'game_root' not in root:
-    root['game_root'] = PersistentMapping()
-if 'sessions' not in root['game_root']:
-    root['game_root']['sessions'] = GameRoot()
+    print("game root not found")
+    root['game_root'] = GameRoot()
+else:
+    print("game root found")
+
+game_root = root['game_root']
+
+for key in game_root.sessions:
+    print("a")
+    print(key)
+
+
 
 transaction.commit()
-
-game_root : GameRoot = root['game_root']['sessions']
 
 # API
 @app.route('/create_session', methods=['POST'])
 def create_session():
+  
     data = request.json
     session_id = data['session_id']
     player_1_name = data['player_1_name']
@@ -45,7 +57,7 @@ def create_session():
             return jsonify({"error": "Session ID already exists"}), 400
         session = game_root.create_session(session_id, player_1_name, player_2_name)
         session.deal_cards()
-
+        game_root._p_changed = True 
         transaction.commit()
         
         return jsonify({
@@ -53,7 +65,9 @@ def create_session():
             "session_id": session_id})
     
     except ValueError as e:
+        transaction.abort()
         return jsonify({"error": str(e)}), 400
+    
     
 @app.route('/play_card', methods=['POST'])
 def play_card():
@@ -67,37 +81,42 @@ def play_card():
     
     if not card:
         return jsonify({"error": "Couldn't make card"}), 400
-    else:
-        print(card.parse_card())
+    
         
     session : GameSession = game_root.get_session(session_id)
     
     if not session:
         return jsonify({"error": "Session not found"}), 404
-    
+
     played_card : Card
     session_player : Player
     
     if player == session.player1.name:
         session_player = session.player1
         played_card = session_player.play_card(card)
+        session._p_changed = 1
+        transaction.commit()
     elif player == session.player2.name:
         session_player = session.player2
         played_card = session_player.play_card(card)
+        session._p_changed = 1
+        transaction.commit()
     else:
         return jsonify({"error": "Player not found."}), 400
     
     if not played_card:
+        transaction.commit()
         return jsonify({"error": f"Card not found in player {session_player.name} hand."}), 400
     else:
         session_player.set_chosen_card(played_card)
+        session._p_changed = 1
         transaction.commit()
     
     # check whether both players played
     if session.check_if_both_players_chose_cards():
         session_round_winner = session.play_round(session.player1.chosen_card, session.player2.chosen_card)
         session.deal_cards_end_turn(session_round_winner)
-        
+        session._p_changed = 1
         transaction.commit()
         
         # check if the session has ended
@@ -105,9 +124,12 @@ def play_card():
             and (len(session.player1.cards) == 0 or len(session.player2.cards) == 0):
                 session.finished = True
                 session.end_session()
+                session._p_changed = 1
                 transaction.commit()
-                connection.close()
+
+                
                 print("session finished!")
+                
                 return jsonify({
                     "message": "Session finished",
                     "winner": session.winner,
@@ -116,8 +138,7 @@ def play_card():
                 })
         else:
             print("round finished")
-            print("amount of ai cards", len(session.player2.cards))
-            print("amount of player cards", len(session.player1.cards))
+      
             return jsonify({
                 "message": "Round finished",
                 "winner": session_round_winner,
@@ -161,27 +182,23 @@ def get_session_state():
     
     return jsonify(state), 200
 
-@app.route('/get_winner', methods=['GET'])
-def get_winner():
-    session_id = request.args.get('session_id')
+@app.route('/rejoin_unfinished_session', methods=['GET'])
+def rejoin_unfinished_session():
+    data = request.json
+    session_id = data['session_id']
     session : GameSession = game_root.get_session(session_id)
+    
     if not session:
         return jsonify({"error": "Session not found."}), 404
     
-    if not session.finished:
-        return jsonify({"error": "Game is not finished yet."}), 400
+    if session.finished:
+        return jsonify({"error": "Game has already finished."}), 400
     
-    winner = session.get_session_winner_player()
-    if winner == 0:
-        return jsonify({
-            "message": "Session winner returned",
-            "winner": 0,
-            "score": None})
-    else:
-        return jsonify({
-            "message": "Session winner returned",
-            "winner": winner.name,
-            "score": winner.get_player_score()})
+    return jsonify(
+        {
+            "message": "Session rejoined"
+        }
+    ), 200
 
 @app.route('/delete_session', methods=['POST'])
 def delete_session():
@@ -201,8 +218,6 @@ def delete_session():
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
-if __name__ == '__main__':
-    app.run(debug=True)
 
 @app.route('/get_all_sessions_summary', methods=['GET'])
 def get_all_sessions_summary():
@@ -233,9 +248,5 @@ def get_all_sessions_summary():
         return jsonify({"message": "Error retrieving sessions", "error": str(e)}), 500
 
 
-# @app.teardown_appcontext
-# def close_connection(exception=None):
-#     if connection:
-#         transaction.commit()
-#         connection.close()
-#         db.close()
+if __name__ == '__main__':
+    app.run(debug=True)

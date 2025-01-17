@@ -69,40 +69,15 @@ class Deck(persistent.Persistent):
         if len(self.cards) > 0:
             # print("not empty")
             drawn_card = self.cards.pop()
-            self._p_changed = 1
+            # self._p_changed = 1
             return drawn_card
         else:
             print("empty deck")
             return None
-    
-    def add_to_discard(self, card):
-        if len(self.discard_pile) <= 32:
-            self.discard_pile.append(card)
-            self._p_changed = 1
-        else:
-            print("too many cards in discard deck!")
-    
-    def get_discard_size(self) -> int:
-        return len(self.discard_pile)
 
     def get_deck_size(self) -> int:
         return len(self.cards)
-  
-    
-    # def deck_debug(self):
-    #     card : Card
-    #     if self.cards:
-    #         for card in self.cards:
-    #             print(card.card_suit, card.card_value)
-    #     print("amount of cards in deck", len(self.cards) )
-        
-    #     drawn_card = self.draw_card()
-    #     print("drawing card", drawn_card.parse_card())
-    #     print("amount of cards in deck", len(self.cards) )
-    #     print("adding to discard pile", drawn_card.parse_card())
-    #     self.add_to_discard(drawn_card)
-    #     print("amount of cards in normal deck", len(self.cards) )
-    #     print("amount of cards in discard pile", len(self.discard_pile))
+
     
 class Player(persistent.Persistent):
     def __init__(self, name):
@@ -110,18 +85,17 @@ class Player(persistent.Persistent):
         self.name = name
         self.score = 0
         self.cards = PersistentList()
-        self.can_play : bool = False
         self.chosen_card : Card = None
     
    # card initialization handled at the start of game?
    
-    def enable_turn(self):
-        self.can_play = True
-        self._p_changed = 1
+    # def enable_turn(self):
+    #     self.can_play = True
+    #     self._p_changed = 1
     
-    def disable_turn(self):
-        self.can_play = False
-        self._p_changed = 1
+    # def disable_turn(self):
+    #     self.can_play = False
+    #     self._p_changed = 1
     
     def play_card(self, selected_card : Card) -> Card:
         '''removes card from player hand and returns card object'''
@@ -129,7 +103,7 @@ class Player(persistent.Persistent):
         if self.cards and card_to_play:
             print("can play card!")
             played_card : Card = self.cards.pop(self.cards.index(card_to_play))
-            self._p_changed = 1
+            # self._p_changed = 1
             return played_card
         else:
             print("cant play card!")
@@ -137,7 +111,7 @@ class Player(persistent.Persistent):
     def add_card_to_deck(self, card : Card):
         if len(self.cards) <= 4:
             self.cards.append(card)
-            self._p_changed = 1
+            # self._p_changed = 1
         else:
             print("too many cards in hand")
         
@@ -267,6 +241,7 @@ class GameSession(persistent.Persistent):
             if first_card_draw == 1:
                 card1 = self.deck.draw_card()
                 card2 = self.deck.draw_card()
+                self._p_changed = 1
                 if card1 != None:
                     self.player1.add_card_to_deck(card1)
                 if card2 != None:
@@ -275,6 +250,7 @@ class GameSession(persistent.Persistent):
                 
                 card1 = self.deck.draw_card()
                 card2 = self.deck.draw_card()
+                self._p_changed = 1
                 if card1 != None:
                     self.player2.add_card_to_deck(card1)
                 if card2 != None:
@@ -286,7 +262,9 @@ class GameSession(persistent.Persistent):
         # round ends when both players played
         round_winner = self.determine_round_winner(player_1_move, player_2_move)
         self.player1.chosen_card = None
+        self.player1._p_changed = 1
         self.player2.chosen_card = None
+        self.player2._p_changed = 1
         if round_winner == 0:
             # just in case of tie
             # both players get points
@@ -340,14 +318,15 @@ class GameSession(persistent.Persistent):
 class GameRoot(persistent.Persistent):
     def __init__(self):
         super().__init__()
-        self.sessions = IOBTree() # key: ID, value: gamesession
+        self.sessions = IOBTree.IOBTree() # key: ID, value: gamesession
     
     def create_session(self, session_id : int, player_1_name, player_2_name) -> GameSession:
         if session_id in self.sessions:
             raise ValueError("Session ID already exists.")
         session = GameSession(session_id, player_1_name, player_2_name)
+        print(self.sessions)
         self.sessions[session_id] = session
-        self._p_changed = 1
+        # self._p_changed = 1
         return session
     
     def get_session(self, session_id) -> GameSession:
@@ -356,4 +335,19 @@ class GameRoot(persistent.Persistent):
     def delete_session(self, session_id: int):
         if session_id in self.sessions:
             del self.sessions[session_id]
-            self._p_changed = 1
+            # self._p_changed = 1
+    
+
+class ArchivedSession(persistent.Persistent):
+    def __init__(self, session : GameSession):
+        
+        super().__init__()
+        
+        self.session_id = session.session_id
+        self.player1 = session.player1.name
+        self.player2 = session.player2.name
+        self.winner = session.winner
+        self.finished = session.finished
+        
+        def __repr__(self):
+            return f"<ArchivedSession description={self.session_id}>"

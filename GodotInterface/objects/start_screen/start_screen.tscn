@@ -1,25 +1,32 @@
-[gd_scene load_steps=4 format=3 uid="uid://bt04sbfcb78g8"]
+[gd_scene load_steps=7 format=3 uid="uid://bt04sbfcb78g8"]
 
 [ext_resource type="Script" uid="uid://cgf4nq6k8sp2b" path="res://objects/start_screen/start_screen.gd" id="1_cpufy"]
+[ext_resource type="Theme" uid="uid://dxr4c3c8ln5xd" path="res://assets/game_theme.tres" id="1_mra88"]
 [ext_resource type="Script" uid="uid://bvilwyruk571l" path="res://objects/start_screen/new_session_settings.gd" id="2_uwbhg"]
 [ext_resource type="PackedScene" uid="uid://by073d562yhdp" path="res://objects/ui/one_session.tscn" id="3_mcwdc"]
+[ext_resource type="Script" uid="uid://cg7sj2skah7pd" path="res://objects/start_screen/rejoin_session.gd" id="4_b8m4h"]
+[ext_resource type="PackedScene" uid="uid://b8ie21ssfidd0" path="res://objects/ui/rules_container.tscn" id="6_mra88"]
 
-[node name="StartScreen" type="Control" node_paths=PackedStringArray("create_new_session_button", "see_previous_sessions_button", "quit_game_button", "main_settings_container", "new_session_container", "past_sessions_container", "go_back_button_session", "go_back_button_past", "sessions_container")]
+[node name="StartScreen" type="Control" node_paths=PackedStringArray("create_new_session_button", "see_previous_sessions_button", "quit_game_button", "rejoin_session_button", "main_settings_container", "new_session_container", "past_sessions_container", "rejoin_session_container", "go_back_button_session", "go_back_button_past", "go_back_button_rejoin", "sessions_container")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_mra88")
 script = ExtResource("1_cpufy")
 create_new_session_button = NodePath("MarginContainer/MainSettings/Button")
 see_previous_sessions_button = NodePath("MarginContainer/MainSettings/Button2")
 quit_game_button = NodePath("MarginContainer/MainSettings/Button3")
+rejoin_session_button = NodePath("MarginContainer/MainSettings/Button4")
 main_settings_container = NodePath("MarginContainer/MainSettings")
 new_session_container = NodePath("MarginContainer/NewSessionSettings")
 past_sessions_container = NodePath("MarginContainer/PastSessions")
+rejoin_session_container = NodePath("MarginContainer/RejoinSession")
 go_back_button_session = NodePath("MarginContainer/NewSessionSettings/GoBackButton")
 go_back_button_past = NodePath("MarginContainer/PastSessions/GoBackButton")
+go_back_button_rejoin = NodePath("MarginContainer/RejoinSession/GoBackButton")
 sessions_container = NodePath("MarginContainer/PastSessions/ScrollContainer/SessionsContainer")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -43,6 +50,14 @@ text = "Start New Game"
 [node name="Button2" type="Button" parent="MarginContainer/MainSettings"]
 layout_mode = 2
 text = "View Past Sessions"
+
+[node name="Button5" type="Button" parent="MarginContainer/MainSettings"]
+layout_mode = 2
+text = "View Rules"
+
+[node name="Button4" type="Button" parent="MarginContainer/MainSettings"]
+layout_mode = 2
+text = "Rejoin Session"
 
 [node name="Button3" type="Button" parent="MarginContainer/MainSettings"]
 layout_mode = 2
@@ -114,3 +129,80 @@ layout_mode = 2
 [node name="GoBackButton" type="Button" parent="MarginContainer/PastSessions"]
 layout_mode = 2
 text = "Go back"
+
+[node name="RejoinSession" type="VBoxContainer" parent="MarginContainer" node_paths=PackedStringArray("rejoin_session_button", "session_id_input")]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 15
+script = ExtResource("4_b8m4h")
+rejoin_session_button = NodePath("StartSessionButton")
+session_id_input = NodePath("HBoxContainer/IdNameInput")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/RejoinSession"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/RejoinSession/HBoxContainer"]
+layout_mode = 2
+text = "Session ID:"
+
+[node name="IdNameInput" type="LineEdit" parent="MarginContainer/RejoinSession/HBoxContainer"]
+layout_mode = 2
+placeholder_text = "0000"
+
+[node name="StartSessionButton" type="Button" parent="MarginContainer/RejoinSession"]
+layout_mode = 2
+text = "Rejoin session!"
+
+[node name="SessionStatus" type="Label" parent="MarginContainer/RejoinSession"]
+layout_mode = 2
+text = "Session already in progress!"
+
+[node name="GoBackButton" type="Button" parent="MarginContainer/RejoinSession"]
+layout_mode = 2
+text = "Go back"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(750, 0)
+layout_mode = 2
+text = "Each round, the players choose cards to play.
+The player with the stronger card scores a point.
+The goal of the game is to score as many points as possible."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="HBoxContainer" parent="MarginContainer/VBoxContainer" instance=ExtResource("6_mra88")]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(750, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "The ACE overpowers everything by default, unless an ACE of a stronger suit is played as well."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(750, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "If the cards played are of suits of equal strength, then the card with the higher value wins."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Button" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Go Back"

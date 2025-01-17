@@ -15,6 +15,9 @@ func _ready() -> void:
 func request_new_session(id : int, player_name : String):
 	HTTPHandler.create_session(id, player_name, "AI")
 
+func request_rejoin_session(id):
+	HTTPHandler.rejoin_session(id)
+
 func switch_to_game_session():
 	get_child(0).queue_free()
 	add_child(scenes[1].instantiate())
@@ -24,6 +27,9 @@ func switch_to_main_menu():
 	add_child(scenes[0].instantiate())
 
 func _on_new_session_created(session_id : int):
+	HTTPHandler.get_session_state(session_id)
+
+func _on_session_rejoined(session_id : int):
 	HTTPHandler.get_session_state(session_id)
 
 func _on_session_status_returned(data : SessionData):

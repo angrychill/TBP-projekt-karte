@@ -6,8 +6,8 @@ signal card_clicked_on(card_data : CardData, card : Node)
 @export var card_data : CardData
 @export var label_up : Label
 @export var label_down : Label
-@export var label_mid : Label
 @export var is_face_down : bool = false
+@export var sprite : TextureRect
 
 #func _init(data : CardData) -> void:
 	#card_data = data
@@ -17,9 +17,10 @@ func _ready() -> void:
 	
 	self.gui_input.connect(_on_input)
 	
-	label_down.text = str(card_data.value)
+	label_down.text = CardUtility.labels[card_data.value]
 	label_up.text = str(card_data.value)
-	label_mid.text = str(card_data.suit)
+	
+	sprite.texture = CardUtility.sprites[card_data.suit]
 	
 	if is_face_down == true:
 		for child in get_children():

@@ -1,13 +1,19 @@
-[gd_scene load_steps=7 format=3 uid="uid://bob34351lxgys"]
+[gd_scene load_steps=15 format=3 uid="uid://bob34351lxgys"]
 
+[ext_resource type="Theme" uid="uid://dxr4c3c8ln5xd" path="res://assets/game_theme.tres" id="1_5bw47"]
 [ext_resource type="Script" uid="uid://doc7ey3540a5h" path="res://objects/ui/ui_play_session.gd" id="1_v8m4q"]
-[ext_resource type="Texture2D" uid="uid://dukqpxjrbncdo" path="res://icon.svg" id="1_xg4e8"]
 [ext_resource type="PackedScene" uid="uid://b3goxqh13dwrf" path="res://objects/card_object/card_panel.tscn" id="2_2segm"]
+[ext_resource type="Texture2D" uid="uid://bxe8dosm1ks5y" path="res://assets/heart_sprite.png" id="3_0eue1"]
 [ext_resource type="Script" uid="uid://drey6bxgncmgs" path="res://objects/ui/pp_chosen_card.gd" id="3_xt48p"]
 [ext_resource type="Script" uid="uid://cgg2u6d6n6wh6" path="res://objects/ui/p_player_cards_panel.gd" id="4_epu6v"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2segm"]
-texture = ExtResource("1_xg4e8")
+[ext_resource type="Texture2D" uid="uid://b18r37y2kihx6" path="res://assets/right_arrow.png" id="4_vl6yj"]
+[ext_resource type="Texture2D" uid="uid://cjp5vnj54lbr7" path="res://assets/acorn_sprite.png" id="5_cnr71"]
+[ext_resource type="Texture2D" uid="uid://q1ln2nabl8xr" path="res://assets/up_arrow.png" id="6_p5aft"]
+[ext_resource type="Texture2D" uid="uid://b7fho2fxa65rg" path="res://assets/down_arrow.png" id="7_3edri"]
+[ext_resource type="Texture2D" uid="uid://dqhc513nm17bh" path="res://assets/bell_sprite.png" id="8_oplrf"]
+[ext_resource type="Texture2D" uid="uid://c82by2v22s45s" path="res://assets/left_arrow.png" id="9_w015m"]
+[ext_resource type="Texture2D" uid="uid://c5augq6nna7yi" path="res://assets/leaves_sprite.png" id="10_2l561"]
+[ext_resource type="FontFile" uid="uid://di3prny3gssjf" path="res://assets/NotJamOldStyle11.ttf" id="11_0eue1"]
 
 [node name="UIPlaySession" type="Control" node_paths=PackedStringArray("player_chosen_card_container", "other_chosen_card_container", "player_choice_button", "player_hand_panel", "other_player_choice_status", "other_player_score", "other_player_hand_panel", "player_score", "player_label")]
 layout_mode = 3
@@ -16,16 +22,17 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_5bw47")
 script = ExtResource("1_v8m4q")
-player_chosen_card_container = NodePath("MarginContainer/VBoxContainer/CardComparison/HBoxContainer/PPChosenCard")
-other_chosen_card_container = NodePath("MarginContainer/VBoxContainer/CardComparison/HBoxContainer/OPChosenCard")
-player_choice_button = NodePath("MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/CardChoiceButton")
-player_hand_panel = NodePath("MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel")
-other_player_choice_status = NodePath("MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus/OPlayerStatus")
-other_player_score = NodePath("MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus/OPlayerScore/OPlayerScoreText")
-other_player_hand_panel = NodePath("MarginContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer/OPlayerCards")
-player_score = NodePath("MarginContainer/VBoxContainer/PlayingPlayer/PPlayerStatus/PPlayerScore/PPlayerScoreText")
-player_label = NodePath("MarginContainer/VBoxContainer/PlayingPlayer/PPlayerStatus/PPlayerName")
+player_chosen_card_container = NodePath("MarginContainer/HBoxContainer/VBoxContainer/CardComparison/HBoxContainer/PPChosenCard")
+other_chosen_card_container = NodePath("MarginContainer/HBoxContainer/VBoxContainer/CardComparison/HBoxContainer/OPChosenCard")
+player_choice_button = NodePath("MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/VBoxContainer/CardChoiceButton")
+player_hand_panel = NodePath("MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel")
+other_player_choice_status = NodePath("MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/OPlayerStatus/OPlayerStatus")
+other_player_score = NodePath("MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/OPlayerStatus/OPlayerScore/OPlayerScoreText")
+other_player_hand_panel = NodePath("MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer/OPlayerCards")
+player_score = NodePath("MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/PPlayerStatus/PPlayerScore/PPlayerScoreText")
+player_label = NodePath("MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/PPlayerStatus/PPlayerName")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -34,185 +41,262 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 32
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Rules:"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+columns = 3
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer/HBoxContainer/GridContainer"]
+texture_filter = 1
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("3_0eue1")
+
+[node name="TextureRect2" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer/HBoxContainer/GridContainer"]
+texture_filter = 1
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("4_vl6yj")
+
+[node name="TextureRect3" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer/HBoxContainer/GridContainer"]
+texture_filter = 1
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("5_cnr71")
+
+[node name="TextureRect4" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer/HBoxContainer/GridContainer"]
+texture_filter = 1
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("6_p5aft")
+
+[node name="TextureRect5" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer/HBoxContainer/GridContainer"]
+texture_filter = 1
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="TextureRect6" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer/HBoxContainer/GridContainer"]
+texture_filter = 1
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("7_3edri")
+
+[node name="TextureRect7" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer/HBoxContainer/GridContainer"]
+texture_filter = 1
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("8_oplrf")
+
+[node name="TextureRect8" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer/HBoxContainer/GridContainer"]
+texture_filter = 1
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("9_w015m")
+
+[node name="TextureRect9" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer/HBoxContainer/GridContainer"]
+texture_filter = 1
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("10_2l561")
+
+[node name="Label2" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("11_0eue1")
+theme_override_font_sizes/font_size = 22
+text = "ACE
+KING
+OBERMANN
+UNTERMANN
+10
+9
+8
+7"
+horizontal_alignment = 1
+
+[node name="Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "Quit session"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
 theme_override_constants/separation = 30
 alignment = 1
 
-[node name="OtherPlayer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="OtherPlayer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
 alignment = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/OtherPlayer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer"]
 layout_mode = 2
-theme_override_constants/margin_top = 15
-theme_override_constants/margin_bottom = 15
+theme_override_constants/margin_top = 16
 
-[node name="OPlayerCardsPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/MarginContainer"]
+[node name="OPlayerCardsPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/MarginContainer"]
 custom_minimum_size = Vector2(580, 0)
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 15
-theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="OPlayerCards" type="HBoxContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer"]
+[node name="OPlayerCards" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer"]
 custom_minimum_size = Vector2(100, 150)
 layout_mode = 2
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer/OPlayerCards"]
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
-
-[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer/OPlayerCards"]
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
-
-[node name="PanelContainer3" type="PanelContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer/OPlayerCards"]
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
-
-[node name="PanelContainer4" type="PanelContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer/OPlayerCards"]
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_2segm")
-
-[node name="OPlayerStatus" type="VBoxContainer" parent="MarginContainer/VBoxContainer/OtherPlayer"]
+[node name="OPlayerStatus" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 alignment = 1
 
-[node name="OPlayerScore" type="HBoxContainer" parent="MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus"]
+[node name="OPlayerScore" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/OPlayerStatus"]
 layout_mode = 2
 alignment = 1
 
-[node name="OPlayerScoreLabel" type="Label" parent="MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus/OPlayerScore"]
+[node name="OPlayerScoreLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/OPlayerStatus/OPlayerScore"]
 layout_mode = 2
 text = "Score"
 
-[node name="OPlayerScoreText" type="Label" parent="MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus/OPlayerScore"]
+[node name="OPlayerScoreText" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/OPlayerStatus/OPlayerScore"]
 layout_mode = 2
 text = "0"
 
-[node name="OPlayerName" type="Label" parent="MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus"]
+[node name="OPlayerName" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/OPlayerStatus"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Player AI"
 
-[node name="OPlayerStatus" type="Label" parent="MarginContainer/VBoxContainer/OtherPlayer/OPlayerStatus"]
+[node name="OPlayerStatus" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/OPlayerStatus"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Waiting..."
 
-[node name="CardComparison" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="CardComparison" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-size_flags_vertical = 3
+size_flags_vertical = 6
 theme_override_constants/separation = 20
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/CardComparison"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/CardComparison"]
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_vertical = 6
 theme_override_constants/separation = 50
 
-[node name="PPChosenCard" type="PanelContainer" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer"]
+[node name="PPChosenCard" type="PanelContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/CardComparison/HBoxContainer"]
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 2
 script = ExtResource("3_xt48p")
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer"]
+[node name="VsLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/CardComparison/HBoxContainer"]
 layout_mode = 2
 text = "vs"
 
-[node name="OPChosenCard" type="PanelContainer" parent="MarginContainer/VBoxContainer/CardComparison/HBoxContainer"]
+[node name="OPChosenCard" type="PanelContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/CardComparison/HBoxContainer"]
 custom_minimum_size = Vector2(150, 200)
 layout_mode = 2
 script = ExtResource("3_xt48p")
 
-[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/CardComparison"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = " "
-
-[node name="PlayingPlayer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="PlayingPlayer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="PPlayerStatus" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer"]
+[node name="PPlayerStatus" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 alignment = 1
 
-[node name="PPlayerName" type="Label" parent="MarginContainer/VBoxContainer/PlayingPlayer/PPlayerStatus"]
+[node name="PPlayerName" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/PPlayerStatus"]
 layout_mode = 2
 text = "Player 2"
 horizontal_alignment = 1
 
-[node name="PPlayerScore" type="HBoxContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/PPlayerStatus"]
+[node name="PPlayerScore" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/PPlayerStatus"]
 layout_mode = 2
 alignment = 1
 
-[node name="PPlayerScoreLabel" type="Label" parent="MarginContainer/VBoxContainer/PlayingPlayer/PPlayerStatus/PPlayerScore"]
+[node name="PPlayerScoreLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/PPlayerStatus/PPlayerScore"]
 layout_mode = 2
 text = "Score"
 
-[node name="PPlayerScoreText" type="Label" parent="MarginContainer/VBoxContainer/PlayingPlayer/PPlayerStatus/PPlayerScore"]
+[node name="PPlayerScoreText" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/PPlayerStatus/PPlayerScore"]
 layout_mode = 2
 text = "0"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer"]
 layout_mode = 2
 
-[node name="CardChoiceButton" type="Button" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer"]
+[node name="CardChoiceButton" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Choose this card"
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/margin_bottom = 15
 
-[node name="PPlayerCardsPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer" node_paths=PackedStringArray("cards_parent")]
+[node name="PPlayerCardsPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer" node_paths=PackedStringArray("cards_parent")]
 custom_minimum_size = Vector2(580, 0)
 layout_mode = 2
 script = ExtResource("4_epu6v")
 cards_parent = NodePath("MarginContainer/Player2Cards")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="Player2Cards" type="HBoxContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer"]
+[node name="Player2Cards" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer"]
 custom_minimum_size = Vector2(100, 150)
 layout_mode = 2
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="PanelContainer" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards" instance=ExtResource("2_2segm")]
+[node name="PanelContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards" instance=ExtResource("2_2segm")]
 layout_mode = 2
 
-[node name="PanelContainer2" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards" instance=ExtResource("2_2segm")]
+[node name="PanelContainer2" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards" instance=ExtResource("2_2segm")]
 layout_mode = 2
 
-[node name="PanelContainer3" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards" instance=ExtResource("2_2segm")]
+[node name="PanelContainer3" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards" instance=ExtResource("2_2segm")]
 layout_mode = 2
 
-[node name="PanelContainer4" parent="MarginContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards" instance=ExtResource("2_2segm")]
+[node name="PanelContainer4" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/VBoxContainer/MarginContainer/PPlayerCardsPanel/MarginContainer/Player2Cards" instance=ExtResource("2_2segm")]
 layout_mode = 2

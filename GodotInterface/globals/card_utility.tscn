@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=3 uid="uid://gbgf2fg21xgh"]
+
+[ext_resource type="Script" uid="uid://buwyo75wi3kus" path="res://globals/card_info.gd" id="1_8at7f"]
+[ext_resource type="Texture2D" uid="uid://bxe8dosm1ks5y" path="res://assets/heart_sprite.png" id="2_oqgot"]
+[ext_resource type="Texture2D" uid="uid://cjp5vnj54lbr7" path="res://assets/acorn_sprite.png" id="3_x2atv"]
+[ext_resource type="Texture2D" uid="uid://dqhc513nm17bh" path="res://assets/bell_sprite.png" id="4_d8qjo"]
+[ext_resource type="Texture2D" uid="uid://c5augq6nna7yi" path="res://assets/leaves_sprite.png" id="5_x2atv"]
+
+[node name="CardUtility" type="Node"]
+script = ExtResource("1_8at7f")
+sprites = {
+1: ExtResource("2_oqgot"),
+2: ExtResource("3_x2atv"),
+3: ExtResource("4_d8qjo"),
+4: ExtResource("5_x2atv")
+}
+labels = {
+7: "SEVEN",
+8: "EIGHT",
+9: "NINE",
+10: "TEN",
+11: "UNTERMANN",
+12: "OBERMANN",
+13: "KONIG",
+100: "ACE"
+}

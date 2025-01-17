@@ -26,6 +26,7 @@ func _ready() -> void:
 func initialize_session():
 	# set player hand
 	play_session_ui.set_up_player_hand(real_player.get_hand_cards())
+	play_session_ui.set_up_ai_hand(ai_player.get_hand_cards())
 	play_session_ui.player_label.text = real_player.player_data.player_name
 	pass
 
@@ -47,11 +48,9 @@ func update_ai_status_waiting():
 	play_session_ui.update_other_player_status("Choosing...")
 
 func update_ai_status_chosen(data : CardData):
-	print("chosen")
 	play_session_ui.update_other_player_status("Chosen")
 	play_session_ui.update_other_player_choice(data)
-	print("should've updated other player choice")
-
+	
 
 func _on_player_chose_card(card : CardData):
 	# send http request
@@ -63,6 +62,9 @@ func _on_player_chose_card(card : CardData):
 func _on_ai_chose_card(card : CardData):
 
 	update_ai_status_chosen(card)
+	
+	await get_tree().create_timer(2.0).timeout
+	
 	# send http request
 	HTTPHandler.play_card(session_data.session_id, ai_player.player_data.player_name, card)
 	
@@ -78,13 +80,14 @@ func update_session(data : SessionData):
 	print("session info data")
 	
 	# printing
-	print("player 1 cards ", data.player_1_data.parse_hand_resource(data.player_1_data.player_hand))
-	print("player 2 cards ", data.player_2_data.parse_hand_resource(data.player_2_data.player_hand))
+	#print("player 1 cards ", data.player_1_data.parse_hand_resource(data.player_1_data.player_hand))
+	#print("player 2 cards ", data.player_2_data.parse_hand_resource(data.player_2_data.player_hand))
 	
 	# reset ui here
 	play_session_ui.update_round_visuals(data)
-	play_session_ui.other_chosen_card_container.get_child(0).reparent(play_session_ui.other_player_hand_panel)
+	play_session_ui.other_chosen_card_container.get_child(0).queue_free()
 	play_session_ui.set_up_player_hand(data.player_1_data.player_hand)
+	play_session_ui.set_up_ai_hand(data.player_2_data.player_hand)
 	play_session_ui.player_chosen_card_container.get_child(0).queue_free()
 	play_session_ui.enable_choice_button()
 	play_session_ui.other_player_score.text = str(data.player_2_data.player_score)

@@ -10,6 +10,7 @@ const CARD_PANEL = preload("res://objects/card_object/card_panel.tscn")
 @export var other_player_hand_panel : Control
 @export var player_score : Label
 @export var player_label : Label
+@export var vs_label : Label
 
 signal player_chose_card(data : CardData)
 
@@ -62,4 +63,15 @@ func set_up_player_hand(cards : Array[CardData]):
 	player_hand_panel.clear_cards()
 	for card : CardData in cards:
 		player_hand_panel.add_card(card)
+	pass
+
+func set_up_ai_hand(cards : Array[CardData]):
+	for child in other_player_hand_panel.get_children():
+		child.queue_free()
+
+	
+	for card : CardData in cards:
+		var new_card : CardPanel = CARD_PANEL.instantiate()
+		new_card.card_data = card
+		other_player_hand_panel.add_child(new_card)
 	pass
