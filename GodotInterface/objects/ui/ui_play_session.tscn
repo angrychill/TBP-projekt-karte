@@ -1,9 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://bob34351lxgys"]
+[gd_scene load_steps=17 format=3 uid="uid://bob34351lxgys"]
 
 [ext_resource type="Theme" uid="uid://dxr4c3c8ln5xd" path="res://assets/game_theme.tres" id="1_5bw47"]
 [ext_resource type="Script" uid="uid://doc7ey3540a5h" path="res://objects/ui/ui_play_session.gd" id="1_v8m4q"]
 [ext_resource type="PackedScene" uid="uid://b3goxqh13dwrf" path="res://objects/card_object/card_panel.tscn" id="2_2segm"]
 [ext_resource type="Texture2D" uid="uid://bxe8dosm1ks5y" path="res://assets/heart_sprite.png" id="3_0eue1"]
+[ext_resource type="Material" uid="uid://bw5umwjl1m64c" path="res://assets/gamebackground.tres" id="3_cnr71"]
 [ext_resource type="Script" uid="uid://drey6bxgncmgs" path="res://objects/ui/pp_chosen_card.gd" id="3_xt48p"]
 [ext_resource type="Script" uid="uid://cgg2u6d6n6wh6" path="res://objects/ui/p_player_cards_panel.gd" id="4_epu6v"]
 [ext_resource type="Texture2D" uid="uid://b18r37y2kihx6" path="res://assets/right_arrow.png" id="4_vl6yj"]
@@ -14,8 +15,9 @@
 [ext_resource type="Texture2D" uid="uid://c82by2v22s45s" path="res://assets/left_arrow.png" id="9_w015m"]
 [ext_resource type="Texture2D" uid="uid://c5augq6nna7yi" path="res://assets/leaves_sprite.png" id="10_2l561"]
 [ext_resource type="FontFile" uid="uid://di3prny3gssjf" path="res://assets/NotJamOldStyle11.ttf" id="11_0eue1"]
+[ext_resource type="FontFile" uid="uid://dakswb8vgn0pt" path="res://assets/NotJamOldStyle14.ttf" id="11_vl6yj"]
 
-[node name="UIPlaySession" type="Control" node_paths=PackedStringArray("player_chosen_card_container", "other_chosen_card_container", "player_choice_button", "player_hand_panel", "other_player_choice_status", "other_player_score", "other_player_hand_panel", "player_score", "player_label")]
+[node name="UIPlaySession" type="Control" node_paths=PackedStringArray("player_chosen_card_container", "other_chosen_card_container", "player_choice_button", "player_hand_panel", "other_player_choice_status", "other_player_score", "other_player_hand_panel", "player_score", "player_label", "vs_label", "quit_session_button")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,6 +35,17 @@ other_player_score = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Other
 other_player_hand_panel = NodePath("MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel/MarginContainer/OPlayerCards")
 player_score = NodePath("MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/PPlayerStatus/PPlayerScore/PPlayerScoreText")
 player_label = NodePath("MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/PPlayerStatus/PPlayerName")
+vs_label = NodePath("MarginContainer/HBoxContainer/VBoxContainer/CardComparison/HBoxContainer/VsLabel")
+quit_session_button = NodePath("MarginContainer/HBoxContainer/VBoxContainer2/QuitSessionButton")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = ExtResource("3_cnr71")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -47,6 +60,7 @@ theme_override_constants/margin_left = 32
 layout_mode = 2
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -54,11 +68,15 @@ theme_override_constants/separation = 32
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
+theme_override_constants/separation = 16
 
 [node name="Label" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Rules:"
+horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer"]
 layout_mode = 2
@@ -128,8 +146,8 @@ texture = ExtResource("10_2l561")
 
 [node name="Label2" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer/HBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("11_0eue1")
-theme_override_font_sizes/font_size = 22
+theme_override_fonts/font = ExtResource("11_vl6yj")
+theme_override_font_sizes/font_size = 14
 text = "ACE
 KING
 OBERMANN
@@ -140,7 +158,17 @@ UNTERMANN
 7"
 horizontal_alignment = 1
 
-[node name="Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="Label2" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("11_0eue1")
+theme_override_font_sizes/font_size = 22
+text = "ACE trumps all regardless of suit"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="QuitSessionButton" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
 text = "Quit session"
 
@@ -159,7 +187,7 @@ alignment = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer"]
 layout_mode = 2
-theme_override_constants/margin_top = 16
+theme_override_constants/margin_top = 8
 
 [node name="OPlayerCardsPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/MarginContainer"]
 custom_minimum_size = Vector2(580, 0)
@@ -168,6 +196,7 @@ layout_mode = 2
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/MarginContainer/OPlayerCardsPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
@@ -180,10 +209,12 @@ alignment = 1
 [node name="OPlayerStatus" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
+theme_override_constants/separation = 16
 alignment = 1
 
 [node name="OPlayerScore" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/OPlayerStatus"]
 layout_mode = 2
+theme_override_constants/separation = 16
 alignment = 1
 
 [node name="OPlayerScoreLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/OtherPlayer/OPlayerStatus/OPlayerScore"]
@@ -221,8 +252,12 @@ layout_mode = 2
 script = ExtResource("3_xt48p")
 
 [node name="VsLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/CardComparison/HBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("11_0eue1")
+theme_override_font_sizes/font_size = 22
 text = "vs"
+horizontal_alignment = 1
 
 [node name="OPChosenCard" type="PanelContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/CardComparison/HBoxContainer"]
 custom_minimum_size = Vector2(150, 200)
@@ -239,6 +274,7 @@ alignment = 1
 [node name="PPlayerStatus" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
+theme_override_constants/separation = 16
 alignment = 1
 
 [node name="PPlayerName" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/PPlayerStatus"]
@@ -248,6 +284,7 @@ horizontal_alignment = 1
 
 [node name="PPlayerScore" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/PPlayerStatus"]
 layout_mode = 2
+theme_override_constants/separation = 16
 alignment = 1
 
 [node name="PPlayerScoreLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/PPlayerStatus/PPlayerScore"]
@@ -262,6 +299,7 @@ text = "0"
 layout_mode = 2
 
 [node name="CardChoiceButton" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer/PlayingPlayer/VBoxContainer"]
+z_index = 1
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Choose this card"

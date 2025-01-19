@@ -12,15 +12,23 @@ const CARD_PANEL = preload("res://objects/card_object/card_panel.tscn")
 @export var player_label : Label
 @export var vs_label : Label
 
+@export var quit_session_button : Button
+
 signal player_chose_card(data : CardData)
+signal session_quit()
 
 var player_chosen_card_data : CardData
 
 func _ready() -> void:
 	player_choice_button.pressed.connect(_on_choice_button_pressed)
+	quit_session_button.pressed.connect(_on_quit_session_pressed)
+
+func _on_quit_session_pressed():
+	session_quit.emit()
 
 func _on_choice_button_pressed():
 	if player_hand_panel.has_chosen_card():
+		player_hand_panel.chosen_card_node.outline.visible = false
 		player_hand_panel.chosen_card_node.reparent(player_chosen_card_container)
 		player_chosen_card_container.modulate = Color(1.0, 1.0, 1.0)
 		player_chosen_card_data = player_hand_panel.chosen_card_data
@@ -51,6 +59,7 @@ func update_round_visuals(data : SessionData):
 	player_chosen_card_data = null
 	#player_chosen_card_container.get_child(0).queue_free()
 	set_up_player_hand(data.player_1_data.player_hand)
+	vs_label.text = "vs"
 	
 
 func update_other_player_status(text : String):
@@ -75,3 +84,20 @@ func set_up_ai_hand(cards : Array[CardData]):
 		new_card.card_data = card
 		other_player_hand_panel.add_child(new_card)
 	pass
+
+func update_round_winner_label(winner : String, is_tie : bool):
+	if is_tie == false:
+		vs_label.text = winner + " stronger!"
+	else:
+		vs_label.text = winner + "Tie!"
+	pass
+
+func update_session_winner_label(winner : String, is_tie : bool):
+	if is_tie == false:
+		vs_label.text = winner + " WON!"
+	else:
+		vs_label.text = "WINNER TIED!"
+	pass
+
+func update_session_status_waiting():
+	vs_label.text = "Comparing..."

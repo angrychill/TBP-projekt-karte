@@ -54,7 +54,7 @@ def create_session():
     try:
 
         if session_id in game_root.sessions:
-            return jsonify({"error": "Session ID already exists"}), 400
+            return jsonify({"message": "Session already exists"}), 400
         session = game_root.create_session(session_id, player_1_name, player_2_name)
         session.deal_cards()
         game_root._p_changed = True 
@@ -104,7 +104,7 @@ def play_card():
     else:
         return jsonify({"error": "Player not found."}), 400
     
-    if not played_card:
+    if not played_card or played_card == None:
         transaction.commit()
         return jsonify({"error": f"Card not found in player {session_player.name} hand."}), 400
     else:
@@ -114,17 +114,17 @@ def play_card():
     
     # check whether both players played
     if session.check_if_both_players_chose_cards():
-        session_round_winner = session.play_round(session.player1.chosen_card, session.player2.chosen_card)
+        session_round_winner = session.play_round(session.player1.get_chosen_card(), session.player2.get_chosen_card())
         session.deal_cards_end_turn(session_round_winner)
         session._p_changed = 1
         transaction.commit()
         
         # check if the session has ended
-        if len(session.deck.cards) == 0 \
-            and (len(session.player1.cards) == 0 or len(session.player2.cards) == 0):
-                session.finished = True
+        if session.deck.get_deck_size() == 0 \
+            and session.player1.get_player_cards() == 0 or session.player2.get_player_cards() == 0:
+                session.set_session_finished(True)
                 session.end_session()
-                session._p_changed = 1
+
                 transaction.commit()
 
                 
@@ -133,8 +133,8 @@ def play_card():
                 return jsonify({
                     "message": "Session finished",
                     "winner": session.winner,
-                    "player_1_score": session.player1.score,
-                    "player_2_score": session.player2.score
+                    "player_1_score": session.player1.get_player_score(),
+                    "player_2_score": session.player2.get_player_score()
                 })
         else:
             print("round finished")
@@ -142,8 +142,8 @@ def play_card():
             return jsonify({
                 "message": "Round finished",
                 "winner": session_round_winner,
-                "player_1_score": session.player1.score,
-                "player_2_score": session.player2.score
+                "player_1_score": session.player1.get_player_score(),
+                "player_2_score": session.player2.get_player_score()
                 
             })
     
@@ -164,13 +164,13 @@ def get_session_state():
     state = {
         "player_1": {
             "name": session.player1.name,
-            "score": session.player1.score,
+            "score": session.player1.get_player_score(),
             "hand": [card.parse_card() for card in session.player1.cards if card]
         },
         
         "player_2": {
             "name": session.player2.name,
-            "score": session.player2.score,
+            "score": session.player2.get_player_score(),
             "hand": [card.parse_card() for card in session.player2.cards if card]
         },
         "message": "Session state retrieved",
@@ -182,23 +182,38 @@ def get_session_state():
     
     return jsonify(state), 200
 
-@app.route('/rejoin_unfinished_session', methods=['GET'])
+@app.route('/rejoin_session', methods=['GET'])
 def rejoin_unfinished_session():
     data = request.json
     session_id = data['session_id']
     session : GameSession = game_root.get_session(session_id)
     
-    if not session:
-        return jsonify({"error": "Session not found."}), 404
+    if not session or session == None:
+        return jsonify({"message": "Session not found"}), 404
     
     if session.finished:
-        return jsonify({"error": "Game has already finished."}), 400
+        return jsonify({"message": "Session not found"}), 400
     
-    return jsonify(
-        {
-            "message": "Session rejoined"
-        }
-    ), 200
+    state = {
+        "player_1": {
+            "name": session.player1.name,
+            "score": session.player1.get_player_score(),
+            "hand": [card.parse_card() for card in session.player1.cards if card]
+        },
+        
+        "player_2": {
+            "name": session.player2.name,
+            "score": session.player2.get_player_score(),
+            "hand": [card.parse_card() for card in session.player2.cards if card]
+        },
+        "message": "Session rejoined",
+        "deck_size": session.deck.get_deck_size(),
+        "finished": session.finished,
+        "session_id": session_id
+    }
+    
+    return jsonify(state), 200
+
 
 @app.route('/delete_session', methods=['POST'])
 def delete_session():
@@ -249,4 +264,4 @@ def get_all_sessions_summary():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

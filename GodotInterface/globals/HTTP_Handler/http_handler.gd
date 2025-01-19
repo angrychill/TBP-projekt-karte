@@ -9,6 +9,9 @@ signal session_status_returned(data : SessionData)
 signal round_finished(round_winner : int, player_1_score : int, player_2_score : int)
 signal session_summary_retrieved(sessions : Dictionary)
 signal session_finished(session_winner : int, player_1_score : int, player_2_score : int)
+signal session_rejoined(data : SessionData)
+signal session_found(found : bool)
+signal create_new_session(success : bool)
 
 func _ready() -> void:
 	local_ip = IP.resolve_hostname(str(OS.get_environment("COMPUTERNAME")),1)
@@ -39,10 +42,14 @@ func _on_request_completed(result, response_code, headers, body : PackedByteArra
 	var json = JSON.new()
 	var message = json.parse(body.get_string_from_utf8())
 	var data_received : Variant = json.data
-	if response_code != 200:
-		print("epic fail!", data_received)
+	if response_code == 500:
+		print("epic fail on server side!", data_received)
 	else:
 		match (data_received["message"]):
+			"Session already exists":
+				create_new_session.emit(false)
+			"Session not found":
+				session_found.emit(false)
 			"Session state retrieved":
 				handle_session_state_retrieval(data_received)
 			"Round finished":
@@ -58,6 +65,7 @@ func _on_request_completed(result, response_code, headers, body : PackedByteArra
 			"Retrieved session summaries":
 				handle_session_summaries(data_received)
 			"Session rejoined":
+				session_finished.emit(true)
 				handle_session_rejoin(data_received)
 
 
@@ -113,6 +121,8 @@ func get_sessions_summary():
 
 func handle_session_created(data_received : Dictionary):
 	var session_id = data_received["session_id"]
+	create_new_session.emit(true)
+	await get_tree().create_timer(1.0).timeout
 	new_session_created.emit(session_id)
 	pass
 
@@ -126,6 +136,7 @@ func handle_round_finish(data_received: Dictionary):
 
 func handle_session_rejoin(data_received : Dictionary):
 	print("session rejoin")
+	session_found.emit(true)
 	var new_player_1_data : PlayerData = PlayerData.new()
 	var new_player_2_data : PlayerData = PlayerData.new()
 	new_player_1_data.update_player_data(data_received["player_1"])
@@ -140,15 +151,14 @@ func handle_session_rejoin(data_received : Dictionary):
 	new_session_data.player_2_data = new_player_2_data
 	new_session_data.session_id = session_id
 	new_session_data.session_finished = data_received["finished"]
-	
-	new_session_data.winner = data_received["session_winner"]
+
 	
 	#print("player 1 cards in hand: ", new_player_1_data.player_hand.size())
 	#print("player 2 cards in hand: ", new_player_2_data.player_hand.size())
 	#print("player 1 cards ", new_player_1_data.parse_hand_resource(new_player_1_data.player_hand))
 	#print("player 2 cards ", new_player_2_data.parse_hand_resource(new_player_2_data.player_hand))
-
-	session_status_returned.emit(new_session_data)
+	await get_tree().create_timer(2.0).timeout
+	session_rejoined.emit(new_session_data)
 
 func handle_session_finish(data_received: Dictionary):
 	print("SESSION OVER")

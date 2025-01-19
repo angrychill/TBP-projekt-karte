@@ -1,5 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://b3goxqh13dwrf"]
+[gd_scene load_steps=7 format=3 uid="uid://b3goxqh13dwrf"]
 
+[ext_resource type="StyleBox" uid="uid://bt6g8o86ff8t2" path="res://assets/card_panel.tres" id="1_p34pj"]
 [ext_resource type="Script" uid="uid://5qomplpqa2hm" path="res://objects/card_object/card_panel.gd" id="2_p34pj"]
 [ext_resource type="FontFile" uid="uid://csvdbplxaujpq" path="res://assets/Bitfantasy.ttf" id="3_2bllk"]
 [ext_resource type="Script" uid="uid://rihcpdex6w7q" path="res://data_classes/card_data.gd" id="3_14m6w"]
@@ -10,18 +11,54 @@ suit = 1
 value = 11
 metadata/_custom_type_script = ExtResource("3_14m6w")
 
-[node name="PanelContainer" type="PanelContainer" node_paths=PackedStringArray("label_up", "label_down", "sprite")]
-custom_minimum_size = Vector2(120, 150)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_14m6w"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+expand_margin_left = 8.0
+expand_margin_top = 8.0
+expand_margin_right = 8.0
+expand_margin_bottom = 8.0
+shadow_size = 4
+shadow_offset = Vector2(0, 5)
+
+[node name="Card" type="MarginContainer" node_paths=PackedStringArray("label_up", "label_down", "sprite", "outline")]
+custom_minimum_size = Vector2(120, 160)
+anchors_preset = -1
+anchor_right = 0.094
+anchor_bottom = 0.222
+offset_right = -0.320007
+offset_bottom = 0.159988
+size_flags_horizontal = 6
+size_flags_vertical = 6
 script = ExtResource("2_p34pj")
 card_data = SubResource("Resource_epu6v")
 label_up = NodePath("Label")
 label_down = NodePath("Label2")
 sprite = NodePath("TextureRect")
+outline = NodePath("OutlinePanel")
+
+[node name="OutlinePanel" type="PanelContainer" parent="."]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_14m6w")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("1_p34pj")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
+mouse_filter = 1
+theme_override_constants/outline_size = 8
 theme_override_fonts/font = ExtResource("3_2bllk")
 theme_override_font_sizes/font_size = 32
 text = "2"
@@ -30,8 +67,10 @@ text = "2"
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
+mouse_filter = 1
+theme_override_constants/outline_size = 8
 theme_override_fonts/font = ExtResource("3_2bllk")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 32
 text = "2"
 
 [node name="TextureRect" type="TextureRect" parent="."]

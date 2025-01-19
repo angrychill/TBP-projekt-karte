@@ -5,7 +5,6 @@ import persistent
 from persistent.list import PersistentList
 from persistent.mapping import PersistentMapping
 import random
-import transaction
 from BTrees import IOBTree
 
 class CardValue(Enum):
@@ -25,10 +24,10 @@ class CardSuit(Enum):
     LEAVES = "Leaves"
 
 suit_hierarchy = {
-    CardSuit.HEARTS: [CardSuit.ACORNS, CardSuit.BELLS],
-    CardSuit.ACORNS: [CardSuit.BELLS, CardSuit.LEAVES],
-    CardSuit.BELLS: [CardSuit.LEAVES, CardSuit.HEARTS],
-    CardSuit.LEAVES: [CardSuit.HEARTS, CardSuit.ACORNS]
+    CardSuit.HEARTS: [CardSuit.ACORNS],
+    CardSuit.ACORNS: [CardSuit.LEAVES],
+    CardSuit.LEAVES: [CardSuit.BELLS],
+    CardSuit.BELLS: [CardSuit.HEARTS]
 }
 
 
@@ -52,12 +51,8 @@ class Card(persistent.Persistent):
     
 class Deck(persistent.Persistent):
     
-    # it's a stack, so Last in, First out
-    
     def __init__(self):
         self.cards = PersistentList(self.generate_deck())
-        self.discard_pile = PersistentList()
-  
     
     def generate_deck(self) -> PersistentList:
         deck = [Card(suit, value) for suit in CardSuit for value in CardValue]
@@ -67,9 +62,8 @@ class Deck(persistent.Persistent):
     def draw_card(self) -> Card:
         ''' pops card from deck and returns card value '''
         if len(self.cards) > 0:
-            # print("not empty")
             drawn_card = self.cards.pop()
-            # self._p_changed = 1
+            self._p_changed = 1
             return drawn_card
         else:
             print("empty deck")
@@ -87,23 +81,12 @@ class Player(persistent.Persistent):
         self.cards = PersistentList()
         self.chosen_card : Card = None
     
-   # card initialization handled at the start of game?
-   
-    # def enable_turn(self):
-    #     self.can_play = True
-    #     self._p_changed = 1
-    
-    # def disable_turn(self):
-    #     self.can_play = False
-    #     self._p_changed = 1
-    
     def play_card(self, selected_card : Card) -> Card:
         '''removes card from player hand and returns card object'''
         card_to_play = self.is_parsed_card_in_hand(selected_card)
         if self.cards and card_to_play:
             print("can play card!")
             played_card : Card = self.cards.pop(self.cards.index(card_to_play))
-            # self._p_changed = 1
             return played_card
         else:
             print("cant play card!")
@@ -111,7 +94,6 @@ class Player(persistent.Persistent):
     def add_card_to_deck(self, card : Card):
         if len(self.cards) <= 4:
             self.cards.append(card)
-            # self._p_changed = 1
         else:
             print("too many cards in hand")
         
@@ -127,7 +109,12 @@ class Player(persistent.Persistent):
         self._p_changed = 1
     
     def get_player_cards(self) -> int:
-        return self.cards.count
+        num_of_valid_cards : int = 0
+        for card in self.cards:
+            if card != None:
+                num_of_valid_cards += 1
+        
+        return num_of_valid_cards
       
     def is_parsed_card_in_hand(self, card_to_parse : Card) -> Card:
         ''' return card object if found from parsed key: value \n
@@ -147,7 +134,22 @@ class Player(persistent.Persistent):
             self._p_changed = 1
         else:
             print("cannot set card!")
+    
+    def clear_chosen_card(self):
+        self.chosen_card = None
+        self._p_changed = 1
 
+    def has_chosen_card(self) -> bool:
+        if self.chosen_card != None:
+            return True
+        else:
+            return False
+    
+    def get_chosen_card(self) -> Card:
+        if self.chosen_card != None:
+            return self.chosen_card
+        else:
+            return None
 
 class GameSession(persistent.Persistent):
     def __init__(self, session_id, player1_name, player2_name):
@@ -159,13 +161,6 @@ class GameSession(persistent.Persistent):
         self.deck : Deck = Deck()
         self.suit_hierarchy = suit_hierarchy
         self.finished = False
-    
-    # def generate_deck(self) -> PersistentList:
-    #     deck = PersistentList([Card(suit, value) for suit in CardSuit for value in CardValue])
-    #     random.shuffle(deck)
-    #     self.deck = deck
-    #     self._p_changed = 1
-    #     return deck
 
     def deal_cards(self):
         for i in range(0, 4, 1):
@@ -186,16 +181,16 @@ class GameSession(persistent.Persistent):
         suit_comparison : int = self.compare_suits(card1.card_suit, card2.card_suit)
         
         # in case an ace is played by one player
-        if card1.card_value == CardValue.ACE or card2.card_value == CardValue.ACE:
+        if card1.get_value() == CardValue.ACE or card2.get_value() == CardValue.ACE:
             
             # in case if ace is played by both players
-            if card1.card_value == CardValue.ACE and card2.card_value == CardValue.ACE:
+            if card1.get_value() == CardValue.ACE and card2.get_value() == CardValue.ACE:
                 return suit_comparison
            
             # if ace is played by only one player
             else:
                 # return player who played ace
-                if card1.card_value == CardValue.ACE:
+                if card1.get_value() == CardValue.ACE:
                     return 1
                 else:
                     return 2
@@ -207,30 +202,30 @@ class GameSession(persistent.Persistent):
                 return suit_comparison
             # if suits are equal return stronger value
             else:
-                return 1 if card1.card_value.value > card2.card_value.value else 2
-        
-        return 0
-        
+                if card1.get_value().value == card2.get_value().value:
+                    return 0
+                else:
+                    return 1 if card1.get_value().value > card2.get_value().value else 2
+
     
     def determine_round_winner(self, player1choice : Card, player2choice : Card):
         
         comp = self.compare_cards(player1choice, player2choice)
         
         # if comp returns 0, both players get a point for a tie
-        # shouldn't happen but yknow
         return comp
     
     def determine_session_winner(self, player1 : Player, player2 : Player) -> str:
         if not self.finished:
             return None
         else:
-            if player1.score == player2.score:
+            if player1.get_player_score() == player2.get_player_score():
                 return "Tie"
             else:
-                return player1.name if player1.score > player2.score else player2.name
+                return player1.name if player1.get_player_score() > player2.get_player_score() else player2.name
     
     def check_if_both_players_chose_cards(self) -> bool:
-        return self.player1.chosen_card and self.player2.chosen_card
+        return self.player1.has_chosen_card() and self.player2.has_chosen_card()
     
     def deal_cards_end_turn(self, prev_round_winner : int):
         if self.deck:
@@ -241,7 +236,6 @@ class GameSession(persistent.Persistent):
             if first_card_draw == 1:
                 card1 = self.deck.draw_card()
                 card2 = self.deck.draw_card()
-                self._p_changed = 1
                 if card1 != None:
                     self.player1.add_card_to_deck(card1)
                 if card2 != None:
@@ -250,7 +244,7 @@ class GameSession(persistent.Persistent):
                 
                 card1 = self.deck.draw_card()
                 card2 = self.deck.draw_card()
-                self._p_changed = 1
+
                 if card1 != None:
                     self.player2.add_card_to_deck(card1)
                 if card2 != None:
@@ -261,13 +255,13 @@ class GameSession(persistent.Persistent):
     def play_round(self, player_1_move : Card, player_2_move : Card) -> int:
         # round ends when both players played
         round_winner = self.determine_round_winner(player_1_move, player_2_move)
-        self.player1.chosen_card = None
-        self.player1._p_changed = 1
-        self.player2.chosen_card = None
-        self.player2._p_changed = 1
+        self.player1.clear_chosen_card()
+        self.player2.clear_chosen_card()
+  
         if round_winner == 0:
             # just in case of tie
             # both players get points
+            print("tie")
             self.player1.increase_player_score()
             self.player2.increase_player_score()
             return 0
@@ -280,17 +274,15 @@ class GameSession(persistent.Persistent):
             self.player2.increase_player_score()
             return 2
     
-        pass
     
     def play_session(self):
         if self.finished:
             self.winner = self.determine_session_winner(self.player1, self.player2)
             self._p_changed = 1
-            
-        # self.deal_cards(self.player1, self.player2)
+
         
         if self.deck.get_deck_size() <= 0:
-            if self.player1.get_player_cards <= 0 or self.player2.get_player_cards <= 0:
+            if self.player1.get_player_cards() <= 0 or self.player2.get_player_cards() <= 0:
                 self.finished = True
                 self._p_changed = 1
     
@@ -314,6 +306,10 @@ class GameSession(persistent.Persistent):
                 return self.player2
             else:
                 return 0
+    
+    def set_session_finished(self, finished_value : bool):
+        self.finished = finished_value
+        self._p_changed = 1
         
 class GameRoot(persistent.Persistent):
     def __init__(self):
@@ -326,28 +322,16 @@ class GameRoot(persistent.Persistent):
         session = GameSession(session_id, player_1_name, player_2_name)
         print(self.sessions)
         self.sessions[session_id] = session
-        # self._p_changed = 1
+
         return session
     
     def get_session(self, session_id) -> GameSession:
-        return self.sessions[session_id]
+        if not self.sessions.get(session_id):
+            return None
+        else:
+            return self.sessions[session_id]
     
     def delete_session(self, session_id: int):
         if session_id in self.sessions:
             del self.sessions[session_id]
-            # self._p_changed = 1
     
-
-class ArchivedSession(persistent.Persistent):
-    def __init__(self, session : GameSession):
-        
-        super().__init__()
-        
-        self.session_id = session.session_id
-        self.player1 = session.player1.name
-        self.player2 = session.player2.name
-        self.winner = session.winner
-        self.finished = session.finished
-        
-        def __repr__(self):
-            return f"<ArchivedSession description={self.session_id}>"

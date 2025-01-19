@@ -24,10 +24,16 @@ const ONE_SESSION = preload("res://objects/ui/one_session.tscn")
 @export var rules_container : Control
 @export var rules_back : Button
 
+@export var sessions_status_label : Label
+@export var sessions_list_label : Label
+@export var start_session_status : Label
+
 
 func _ready() -> void:
 	
 	HTTPHandler.session_summary_retrieved.connect(_on_session_summary_retrieved)
+	HTTPHandler.session_found.connect(_on_session_found)
+	HTTPHandler.create_new_session.connect(_on_create_new_session)
 	
 	rejoin_session_button.pressed.connect(_on_rejoin_session_button_pressed)
 	quit_game_button.pressed.connect(_on_quit_game_button_pressed)
@@ -40,6 +46,27 @@ func _ready() -> void:
 	rejoin_session_container.rejoin_session.connect(_on_session_rejoin_requested)
 	rules_button.pressed.connect(_on_rules_button_pressed)
 	rules_back.pressed.connect(_on_go_back_pressed)
+	
+	main_settings_container.show()
+	new_session_container.hide()
+	past_sessions_container.hide()
+	rejoin_session_container.hide()
+	rules_container.hide()
+
+func _on_create_new_session(session_created : bool):
+	if session_created == false:
+		start_session_status.text = "Can't create new session!"
+	else:
+		start_session_status.text = "Creating new session..."
+	
+
+func _on_session_found(found : bool):
+	print("session found status retrieved")
+	if found == false:
+		sessions_status_label.text = "Session not found"
+	else:
+		sessions_status_label.text = "Session found!\n Rejoining..."
+
 
 func _on_session_rejoin_requested(id : int):
 	get_parent().request_rejoin_session(id)
@@ -86,11 +113,21 @@ func _on_session_summary_retrieved(sessions : Array):
 	for child in sessions_container.get_children():
 		child.queue_free()
 	
+	if sessions.size() == 0:
+		print("no sessions found")
+		sessions_status_label.text = "0 sessions found"
 	
-	for session in sessions:
-		var new_session_block : OneSession = ONE_SESSION.instantiate()
-		new_session_block.id_label.text = str(session["session_id"])
-		new_session_block.winner_label.text = str(session["winner"])
-		new_session_block.session_finished_label.text = str(session["finished"])
-		sessions_container.add_child(new_session_block)
+	else:
+		print("sessions found")
+		var sessions_num : int= sessions.size()
+		sessions_list_label.text = str(sessions_num) + " sessions found"
+		for session in sessions:
+			var new_session_block : OneSession = ONE_SESSION.instantiate()
+			new_session_block.id_label.text = str(int(session["session_id"]))
+			if session["winner"] == null:
+				new_session_block.winner_label.text = "None"
+			else:
+				new_session_block.winner_label.text = str(session["winner"])
+			new_session_block.session_finished_label.text = str(session["finished"])
+			sessions_container.add_child(new_session_block)
 	

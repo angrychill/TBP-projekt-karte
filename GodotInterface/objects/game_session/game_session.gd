@@ -13,6 +13,7 @@ func _ready() -> void:
 	print("instantiating new game session")
 	ai_player.choice_made.connect(_on_ai_chose_card)
 	play_session_ui.player_chose_card.connect(_on_player_chose_card)
+	play_session_ui.session_quit.connect(_on_session_quit)
 	
 	real_player.player_data = session_data.player_1_data
 	ai_player.player_data = session_data.player_2_data
@@ -28,6 +29,8 @@ func initialize_session():
 	play_session_ui.set_up_player_hand(real_player.get_hand_cards())
 	play_session_ui.set_up_ai_hand(ai_player.get_hand_cards())
 	play_session_ui.player_label.text = real_player.player_data.player_name
+	play_session_ui.other_player_score.text = str(ai_player.player_data.player_score)
+	play_session_ui.player_score.text = str(real_player.player_data.player_score)
 	pass
 
 func _on_session_status_returned(data : SessionData):
@@ -60,10 +63,12 @@ func _on_player_chose_card(card : CardData):
 	start_ai_turn()
 
 func _on_ai_chose_card(card : CardData):
-
+	
+	play_session_ui.update_session_status_waiting()
+	
 	update_ai_status_chosen(card)
 	
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(1.0).timeout
 	
 	# send http request
 	HTTPHandler.play_card(session_data.session_id, ai_player.player_data.player_name, card)
@@ -108,6 +113,18 @@ func _on_session_round_finished(round_winner : int, player_1_points : int, playe
 	# some UI polish handling here
 	# like maybe show_winner and stuff
 	
+	var round_win : String
+	var tie : bool
+	if round_winner == 0:
+		tie = true
+	else:
+		tie = false
+		if round_winner == 1:
+			round_win = real_player.player_data.player_name
+		else:
+			round_win = ai_player.player_data.player_name
+	play_session_ui.update_round_winner_label(round_win, tie)
+	await get_tree().create_timer(1.0).timeout
 	# call session update
 	
 	HTTPHandler.get_session_state(session_data.session_id)
@@ -118,5 +135,17 @@ func _on_session_round_finished(round_winner : int, player_1_points : int, playe
 	
 func _on_session_game_finished(winner : String, p1_score : int, p2_score : int):
 	print("received session game finished!")
-	pass
+	var is_tie : bool
+	if p1_score == p2_score:
+		is_tie = true
+	else:
+		is_tie = false
+	play_session_ui.update_session_winner_label(winner, is_tie)
 	
+	await get_tree().create_timer(2).timeout
+	
+	session_finished.emit()
+	pass
+
+func _on_session_quit():
+	session_finished.emit()

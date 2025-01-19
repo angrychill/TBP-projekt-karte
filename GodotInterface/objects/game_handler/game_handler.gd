@@ -11,6 +11,7 @@ var session_in_progress : bool = false
 func _ready() -> void:
 	HTTPHandler.new_session_created.connect(_on_new_session_created)
 	HTTPHandler.session_status_returned.connect(_on_session_status_returned)
+	HTTPHandler.session_rejoined.connect(_on_session_rejoined)
 
 func request_new_session(id : int, player_name : String):
 	HTTPHandler.create_session(id, player_name, "AI")
@@ -29,8 +30,13 @@ func switch_to_main_menu():
 func _on_new_session_created(session_id : int):
 	HTTPHandler.get_session_state(session_id)
 
-func _on_session_rejoined(session_id : int):
-	HTTPHandler.get_session_state(session_id)
+func _on_session_rejoined(data : SessionData):
+	#HTTPHandler.get_session_state(session_id)
+	var new_session : GameSession = scenes[1].instantiate()
+	new_session.session_data = data
+	new_session.session_finished.connect(_on_session_finished)
+	get_child(0).queue_free()
+	add_child(new_session)
 
 func _on_session_status_returned(data : SessionData):
 	if session_in_progress == true:

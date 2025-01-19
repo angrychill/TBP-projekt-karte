@@ -1,13 +1,17 @@
-extends PanelContainer
+extends Container
 class_name CardPanel
 
-signal card_clicked_on(card_data : CardData, card : Node)
+signal card_clicked_on(card_data : CardData, chosen : bool, card : Node)
 
 @export var card_data : CardData
 @export var label_up : Label
 @export var label_down : Label
 @export var is_face_down : bool = false
 @export var sprite : TextureRect
+
+@export var outline : Control
+
+var chosen : bool = false
 
 #func _init(data : CardData) -> void:
 	#card_data = data
@@ -22,12 +26,8 @@ func _ready() -> void:
 	
 	sprite.texture = CardUtility.sprites[card_data.suit]
 	
-	if is_face_down == true:
-		for child in get_children():
-			child.hide()
-	else:
-		for child in get_children():
-			child.show()
+	outline.visible = false
+	
 
 func set_face_down_value():
 	pass
@@ -45,9 +45,25 @@ func set_face_down_value():
 func _on_input(event : InputEvent):
 	if event.is_action_pressed("click"):
 		print("card clicked!")
-		self.modulate = Color(1.5, 1.5, 1.5)
-		card_clicked_on.emit(card_data, self)
+		#self.modulate = Color(1.25, 1.25, 1.25)
+		#if chosen == false:
+			#chosen = true
+		#else:
+			#chosen = false
+			
+		#card_clicked_on.emit(card_data, chosen, self)
+		
+		if outline.visible == true:
+			outline.visible = false
+			card_clicked_on.emit(card_data, false, self)
+			#self.modulate = Color(1.0, 1.0, 1.0)
+		else:
+			outline.visible = true
+			card_clicked_on.emit(card_data, true, self)
+			#self.modulate = Color(1.25, 1.25, 1.25)
 
 func reset_selection():
 	# print("reset selection")
-	self.modulate = Color(1.0, 1.0, 1.0)
+	#self.modulate = Color(1.0, 1.0, 1.0)
+	outline.visible = false
+	chosen = false

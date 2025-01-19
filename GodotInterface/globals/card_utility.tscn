@@ -19,8 +19,8 @@ labels = {
 8: "EIGHT",
 9: "NINE",
 10: "TEN",
-11: "UNTERMANN",
-12: "OBERMANN",
+11: "UNTER",
+12: "OBER",
 13: "KONIG",
 100: "ACE"
 }

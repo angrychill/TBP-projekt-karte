@@ -9,9 +9,13 @@ func _ready() -> void:
 	for child : CardPanel in cards_parent.get_children():
 		child.card_clicked_on.connect(_on_card_clicked_on)
 
-func _on_card_clicked_on(data : CardData, card : Node):
-	chosen_card_data = data
-	chosen_card_node = card
+func _on_card_clicked_on(data : CardData, chosen : bool, card : Node):
+	if chosen == true:
+		chosen_card_data = data
+		chosen_card_node = card
+	else:
+		chosen_card_data = null
+		chosen_card_node = null
 	
 	for child : CardPanel in cards_parent.get_children():
 		if child != chosen_card_node:
