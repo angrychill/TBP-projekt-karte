@@ -1,0 +1,13 @@
+1. Prvo se moraju instalirati ZODB i Flask.
+Preporučen je Python 3.12.
+pip install ZODB
+pip install Flask
+
+2. Otvoriti projektni folder u command terminalu ili u VSC-u, i upisati komandu:
+
+flask --app Game/DBServer run
+
+3. Pokrenuti Godot TBP Interface.exe i odigrati igru
+
+Cijeli kod može se vidjeti na idućem GitHub repozitoriju:
+https://github.com/angrychill/TBP-projekt-karte
